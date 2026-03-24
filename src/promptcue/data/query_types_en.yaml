@@ -360,6 +360,10 @@ query_types:
       should_check_recency:             false
       should_clarify:                   false
       should_respond_conversationally:  false
+    # analysis sits adjacent to comparison and validation in embedding space.
+    # A tighter effective margin (0.05) reduces false needs_clarification flags
+    # for queries that sit close to those boundaries but still clearly belong here.
+    ambiguity_margin_override: 0.05
 
   - label: update
     description: Request for recent or current information — latest news, version changes, new releases.

@@ -199,12 +199,14 @@ class PromptCueClassifier:
                 score = round(0.60 + 0.25 * specificity + bonus, 4)
                 basis = PCUE_BASIS_TRIGGER_MATCH
             else:
-                # Soft word-overlap fallback across all type vocabulary.
+                # Soft word-overlap fallback: Jaccard similarity |Q∩T| / |Q∪T|.
+                # True set-similarity is less query-length dependent than the prior
+                # |Q∩T|/|Q| formula — long and short queries with the same intersection
+                # now produce equivalent scores.  Lower absolute values (Jaccard ≤ query-
+                # normalised) mean more ambiguous queries fall through to semantic scoring.
                 type_words = self._type_vocab[definition.label]
-                overlap    = (
-                    len(query_words & type_words) / len(query_words)
-                    if query_words else 0.0
-                )
+                union      = query_words | type_words
+                overlap    = len(query_words & type_words) / len(union) if union else 0.0
                 if overlap > 0.0:
                     score = round(min(0.10 + 0.40 * overlap, 0.50), 4)
                     basis = PCUE_BASIS_WORD_OVERLAP

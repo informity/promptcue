@@ -106,3 +106,47 @@ class PromptCueConfig(BaseModel):
     enable_keyword_extraction:    bool = Field(default=False)
     max_keywords:                 int  = Field(default=8, ge=1, le=100)
     spacy_model:                  str  = Field(default='en_core_web_sm')
+
+    # ==============================================================================
+    # Named calibration presets
+    # ==============================================================================
+
+    @classmethod
+    def strict(cls) -> 'PromptCueConfig':
+        """High-precision preset: tighter thresholds, wider ambiguity gate.
+
+        More queries fall through to 'unknown'; fewer borderline queries are
+        returned with a false-confident label.  Use when incorrect classifications
+        are more costly than abstentions (e.g. automated routing without human review).
+        """
+        return cls(
+            similarity_threshold          = 0.70,
+            semantic_similarity_threshold = 0.35,
+            ambiguity_margin              = 0.12,
+            confidence_high_threshold     = 0.75,
+            confidence_medium_threshold   = 0.50,
+        )
+
+    @classmethod
+    def balanced(cls) -> 'PromptCueConfig':
+        """Default balanced preset — same thresholds as the plain constructor.
+
+        Named reference for configuration documentation and comparison tests.
+        """
+        return cls()
+
+    @classmethod
+    def recall_heavy(cls) -> 'PromptCueConfig':
+        """High-recall preset: looser thresholds, narrower ambiguity gate.
+
+        Fewer queries return 'unknown'; more borderline queries are classified.
+        Use when coverage matters more than precision (e.g. analytics, logging,
+        non-critical routing where a wrong label is tolerable).
+        """
+        return cls(
+            similarity_threshold          = 0.35,
+            semantic_similarity_threshold = 0.10,
+            ambiguity_margin              = 0.04,
+            confidence_high_threshold     = 0.55,
+            confidence_medium_threshold   = 0.25,
+        )

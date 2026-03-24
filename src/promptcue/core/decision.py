@@ -130,13 +130,20 @@ class PromptCueDecisionEngine:
 
         # Pull routing, scope, and action directives from the registry.
         definition   = self.registry.get_by_label(top.label)
-        yaml_routing = definition.routing_hints if definition else {}
-        yaml_actions = definition.action_hints  if definition else {}
-        scope        = definition.scope         if definition else PCUE_SCOPE_UNKNOWN
+        yaml_routing = definition.routing_hints              if definition else {}
+        yaml_actions = definition.action_hints               if definition else {}
+        scope        = definition.scope                      if definition else PCUE_SCOPE_UNKNOWN
+        # Per-type margin override — set in query_types_en.yaml as ambiguity_margin_override.
+        # Use it when defined; fall back to the global config value otherwise.
+        eff_margin   = (
+            definition.ambiguity_margin_override
+            if definition and definition.ambiguity_margin_override is not None
+            else self.config.ambiguity_margin
+        )
 
         # Ambiguous even above threshold — the top two candidates are too close.
         # Keep the top label but flag for clarification.
-        is_ambiguous = margin < self.config.ambiguity_margin
+        is_ambiguous = margin < eff_margin
 
         routing_hints = {
             PCUE_HINT_CLARIFICATION: is_ambiguous,

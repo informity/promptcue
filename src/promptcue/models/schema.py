@@ -79,6 +79,11 @@ class PromptCueQueryObject(BaseModel):
     confidence_band:       PromptCueConfidenceBand = PromptCueConfidenceBand.LOW
     ambiguity_score:       float               = Field(ge=0.0, le=1.0)
 
+    @property
+    def runner_up(self) -> PromptCueCandidate | None:
+        """Second-ranked candidate, or None when fewer than two candidates exist."""
+        return self.candidate_query_types[1] if len(self.candidate_query_types) > 1 else None
+
     # ==============================================================================
     # Query dimensions
     # ==============================================================================
@@ -112,3 +117,13 @@ class PromptCueQueryObject(BaseModel):
     def query_type(self) -> str:
         """Compatibility alias for tests and simpler consumers."""
         return self.primary_query_type
+
+    def to_routing_dict(self) -> dict[str, bool]:
+        """Return a flat dict merging routing_hints and action_hints.
+
+        Convenience method for callers that only need the combined hint surface
+        without inspecting the full PromptCueQueryObject.  routing_hints keys take
+        priority when the same key appears in both dicts.
+        """
+        merged = {**self.action_hints, **self.routing_hints}
+        return merged

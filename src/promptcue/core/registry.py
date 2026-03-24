@@ -15,14 +15,15 @@ from promptcue.exceptions import PromptCueRegistryError
 @dataclass(slots=True)
 class PromptCueTypeDefinition:
     """A single query type entry loaded from the YAML registry."""
-    label:         str
-    description:   str
-    triggers:      list[str]       # short phrases for deterministic substring matching
-    examples:      list[str]       # full sentences for semantic embedding anchors
-    negatives:     list[str]       # sentences this type should NOT match (penalty scoring)
-    routing_hints: dict[str, bool]
-    scope:         str             # broad | focused | comparative | exploratory
-    action_hints:  dict[str, bool] # response-generation directives
+    label:                    str
+    description:              str
+    triggers:                 list[str]       # short phrases for deterministic substring matching
+    examples:                 list[str]       # full sentences for semantic embedding anchors
+    negatives:                list[str]       # sentences this type should NOT match (penalty scoring)
+    routing_hints:            dict[str, bool]
+    scope:                    str             # broad | focused | comparative | exploratory
+    action_hints:             dict[str, bool] # response-generation directives
+    ambiguity_margin_override: float | None = None  # overrides PromptCueConfig.ambiguity_margin
 
 
 class PromptCueRegistry:
@@ -77,14 +78,15 @@ class PromptCueRegistry:
 
         definitions = [
             PromptCueTypeDefinition(
-                label         = item['label'],
-                description   = item.get('description', ''),
-                triggers      = item.get('triggers', []),
-                examples      = item.get('examples', []),
-                negatives     = item.get('negatives', []),
-                routing_hints = item.get('routing_hints', {}),
-                scope         = item.get('scope', PCUE_SCOPE_UNKNOWN),
-                action_hints  = item.get('action_hints', {}),
+                label                     = item['label'],
+                description               = item.get('description', ''),
+                triggers                  = item.get('triggers', []),
+                examples                  = item.get('examples', []),
+                negatives                 = item.get('negatives', []),
+                routing_hints             = item.get('routing_hints', {}),
+                scope                     = item.get('scope', PCUE_SCOPE_UNKNOWN),
+                action_hints              = item.get('action_hints', {}),
+                ambiguity_margin_override = item.get('ambiguity_margin_override'),
             )
             for item in raw.get('query_types', [])
         ]
