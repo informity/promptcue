@@ -1,4 +1,4 @@
-# informity-promptcue | KeyBERT-based keyword and keyphrase extractor
+# promptcue | KeyBERT-based keyword and keyphrase extractor
 # Maintainer: Informity
 
 from __future__ import annotations

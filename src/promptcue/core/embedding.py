@@ -1,4 +1,4 @@
-# informity-promptcue | Sentence-transformer embedding backend with lazy loading
+# promptcue | Sentence-transformer embedding backend with lazy loading
 # Maintainer: Informity
 
 from __future__ import annotations

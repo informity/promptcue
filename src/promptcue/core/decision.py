@@ -1,4 +1,4 @@
-# informity-promptcue | Decision engine — resolves classification into a structured result
+# promptcue | Decision engine — resolves classification into a structured result
 # Maintainer: Informity
 
 from __future__ import annotations

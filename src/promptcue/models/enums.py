@@ -1,4 +1,4 @@
-# informity-promptcue | Enums for scope and routing hints — public convenience API
+# promptcue | Enums for scope and routing hints — public convenience API
 # Maintainer: Informity
 
 from __future__ import annotations

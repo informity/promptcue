@@ -1,4 +1,4 @@
-# informity-promptcue | PromptCue package-level constants
+# promptcue | PromptCue package-level constants
 # Maintainer: Informity
 
 from __future__ import annotations

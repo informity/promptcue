@@ -1,4 +1,4 @@
-# informity-promptcue | Runtime configuration for PromptCue
+# promptcue | Runtime configuration for PromptCue
 # Maintainer: Informity
 
 from __future__ import annotations

@@ -1,4 +1,4 @@
-# informity-promptcue | Public exports for the models sub-package
+# promptcue | Public exports for the models sub-package
 # Maintainer: Informity
 
 from promptcue.models.enums import PromptCueRoutingHint, PromptCueScope

@@ -7,8 +7,8 @@ Thank you for your interest in contributing.
 ## Development setup
 
 ```bash
-git clone https://github.com/informity/informity-promptcue.git
-cd informity-promptcue
+git clone https://github.com/informity/promptcue.git
+cd promptcue
 
 python3 -m venv .venv
 source .venv/bin/activate

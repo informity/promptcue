@@ -1,4 +1,4 @@
-# informity-promptcue | Text normalisation utilities
+# promptcue | Text normalisation utilities
 # Maintainer: Informity
 
 from __future__ import annotations

@@ -1,4 +1,4 @@
-# informity-promptcue | Pydantic models for PromptCue public schema
+# promptcue | Pydantic models for PromptCue public schema
 # Maintainer: Informity
 
 from __future__ import annotations

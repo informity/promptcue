@@ -1,4 +1,4 @@
-# informity-promptcue | Language detection using langdetect
+# promptcue | Language detection using langdetect
 # Maintainer: Informity
 
 from __future__ import annotations

@@ -1,4 +1,4 @@
-# informity-promptcue | spaCy-based linguistic feature extractor
+# promptcue | spaCy-based linguistic feature extractor
 # Maintainer: Informity
 
 from __future__ import annotations

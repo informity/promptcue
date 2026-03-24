@@ -1,4 +1,4 @@
-# informity-promptcue | Query type registry — loads and validates query_types.yaml
+# promptcue | Query type registry — loads and validates query_types.yaml
 # Maintainer: Informity
 
 from __future__ import annotations

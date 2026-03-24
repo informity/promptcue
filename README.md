@@ -3,7 +3,7 @@
 [![PyPI version](https://img.shields.io/pypi/v/promptcue.svg)](https://pypi.org/project/promptcue/)
 [![Python versions](https://img.shields.io/pypi/pyversions/promptcue.svg)](https://pypi.org/project/promptcue/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![CI](https://github.com/informity/informity-promptcue/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/informity/informity-promptcue/actions/workflows/ci.yml)
+[![CI](https://github.com/informity/promptcue/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/informity/promptcue/actions/workflows/ci.yml)
 
 PromptCue classifies the intent behind a natural-language prompt and returns structured
 routing cues — telling your LLM pipeline, RAG system, or query router not just *what*
@@ -231,8 +231,8 @@ PromptCueAnalyzer(config: PromptCueConfig | None = None)
 ## Development
 
 ```bash
-git clone https://github.com/informity/informity-promptcue.git
-cd informity-promptcue
+git clone https://github.com/informity/promptcue.git
+cd promptcue
 
 python3 -m venv .venv
 source .venv/bin/activate

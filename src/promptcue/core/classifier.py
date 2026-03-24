@@ -1,4 +1,4 @@
-# informity-promptcue | Cascade classifier — deterministic + semantic scoring
+# promptcue | Cascade classifier — deterministic + semantic scoring
 # Maintainer: Informity
 
 from __future__ import annotations

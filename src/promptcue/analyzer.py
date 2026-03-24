@@ -1,4 +1,4 @@
-# informity-promptcue | Main orchestration entry point for PromptCue
+# promptcue | Main orchestration entry point for PromptCue
 # Maintainer: Informity
 
 from __future__ import annotations

@@ -1,4 +1,4 @@
-# informity-promptcue | Public package exports for PromptCue
+# promptcue | Public package exports for PromptCue
 # Maintainer: Informity
 
 from promptcue.analyzer import PromptCueAnalyzer

@@ -1,4 +1,4 @@
-# informity-promptcue | PromptCue-specific exception hierarchy
+# promptcue | PromptCue-specific exception hierarchy
 # Maintainer: Informity
 
 

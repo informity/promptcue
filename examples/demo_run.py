@@ -1,4 +1,4 @@
-# informity-promptcue | Manual test run across all 9 query types
+# promptcue | Manual test run across all 9 query types
 # Maintainer: Informity
 #
 # Run with:

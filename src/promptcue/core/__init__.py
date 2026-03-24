@@ -1,2 +1,2 @@
-# informity-promptcue | Core scoring and decision components
+# promptcue | Core scoring and decision components
 # Maintainer: Informity
