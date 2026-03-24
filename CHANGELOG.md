@@ -7,6 +7,31 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.1.4] — 2026-03-23
+
+### Added
+- `PromptCueBasis` (`StrEnum`) — typed equivalent for all six `classification_basis` string values (`label_match`, `trigger_match`, `word_overlap`, `fallback`, `semantic_similarity`, `below_threshold`); exported from top-level package
+- `PromptCueLanguageDetector.warm_up()` — pre-loads `langdetect` at startup; called automatically by `PromptCueAnalyzer.warm_up()`
+- Negation guard (`_is_negated`) in `PromptCueClassifier` — trigger phrases preceded by `not`, `never`, `don't`, `avoid`, etc. are demoted to word-overlap tier, preventing false positives like "When NOT to use caching" firing on the `procedure` trigger "to use"
+- Multi-trigger confidence boost — each additional matched trigger phrase adds +0.03 to the score (capped at +0.06), so richly-phrased queries like "compare and contrast — pros and cons" score higher than single-trigger matches
+- `cosine_similarity_batch()` in `core/embedding.py` — vectorised NumPy batch replace the per-example Python loop in the semantic path; single matrix multiply per query instead of N dot products
+- Three parametrised tests for the empty/null YAML guard in `tests/test_registry.py`
+- `PromptCueBasis` assertions added to `tests/test_import.py`
+
+### Changed
+- `PromptCueQueryObject.scope` field type changed from `str` to `PromptCueScope` — Pydantic coerces string inputs automatically; JSON output is unchanged
+- Both failure paths in `PromptCueDecisionEngine.resolve()` (no candidates, below threshold) now return the full four-key `routing_hints` dict — prevents `KeyError` on `unknown` queries
+- `PromptCueLinguistics.named_entities` is now kept in sync automatically when only `entities` is provided, via a `model_validator`
+- `analysis` query type now sets `should_direct_answer: true` — an evaluation is a single coherent response; previously all seven action hints were `false`
+- `recommendation` and `generation` query types no longer hard-code `should_clarify: true` — the decision engine still sets it dynamically when scores are genuinely ambiguous
+- Removed weak chitchat triggers (`thanks`, `awesome`, `ok thanks`, `got it`) that caused false positives on technical queries ending in casual acknowledgements
+- `_top_margin()` helper extracted and shared between `PromptCueClassifier.classify()` and `PromptCueDecisionEngine.resolve()` — removes duplicated top/second/margin derivation
+- `PCUE_UNKNOWN` and `PCUE_SCOPE_UNKNOWN` now have explicit comments documenting their distinct semantic roles
+- `PromptCueEmbeddingBackend.warm_up()` docstring clarifies it is for direct `EmbeddingBackend` consumers; the normal `PromptCueAnalyzer.warm_up()` path reaches the model via the classifier's example cache build
+- Added recommendation triggers: `what is the best way to`, `best way to handle`, `best approach to`
+
+---
+
 ## [0.1.3] — 2026-03-23
 
 ### Added
@@ -63,6 +88,7 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+[0.1.4]: https://github.com/informity/promptcue/compare/v0.1.3...v0.1.4
 [0.1.3]: https://github.com/informity/promptcue/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/informity/promptcue/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/informity/promptcue/compare/v0.1.0...v0.1.1

@@ -15,7 +15,7 @@ from promptcue.constants import (
     PCUE_BASIS_TRIGGER_MATCH,
     PCUE_BASIS_WORD_OVERLAP,
 )
-from promptcue.core.embedding import PromptCueEmbeddingBackend, cosine_similarity
+from promptcue.core.embedding import PromptCueEmbeddingBackend, cosine_similarity_batch
 from promptcue.core.registry import PromptCueRegistry
 from promptcue.models.schema import PromptCueCandidate
 
@@ -23,6 +23,29 @@ from promptcue.models.schema import PromptCueCandidate
 @dataclass(slots=True)
 class PromptCueClassificationResult:
     candidates: list[PromptCueCandidate]
+
+
+def _top_margin(
+    candidates: list[PromptCueCandidate],
+) -> tuple[PromptCueCandidate | None, float]:
+    """Return (top_candidate, margin_between_top_two).
+
+    Used by both PromptCueClassifier.classify() and PromptCueDecisionEngine.resolve()
+    to avoid duplicating the top/second/margin derivation in two places.
+    Returns (None, 0.0) when the candidate list is empty.
+    """
+    if not candidates:
+        return None, 0.0
+    second = candidates[1].score if len(candidates) > 1 else 0.0
+    return candidates[0], candidates[0].score - second
+
+
+# Words immediately before a trigger phrase that indicate negation.
+# When one of these precedes a matched trigger, the match is demoted to word-overlap tier.
+# E.g. "When NOT to use caching" must not fire the procedure trigger "to use".
+_NEGATION_WORDS: frozenset[str] = frozenset({
+    'not', 'never', "don't", "dont", 'no', 'avoid', 'without',
+})
 
 
 class PromptCueClassifier:
@@ -75,9 +98,7 @@ class PromptCueClassifier:
         if not self.config.enable_semantic_scoring:
             return det
 
-        top          = det.candidates[0] if det.candidates else None
-        second_score = det.candidates[1].score if len(det.candidates) > 1 else 0.0
-        margin       = (top.score - second_score) if top else 0.0
+        top, margin = _top_margin(det.candidates)
 
         high_confidence = (
             top is not None
@@ -118,7 +139,7 @@ class PromptCueClassifier:
             Word-boundary matching prevents false positives such as "validation"
             firing inside "invalidation" or "generation" inside "degeneration".
 
-        Tier 2 — trigger_match (0.60–0.85):
+        Tier 2 — trigger_match (0.60–0.91):
             One or more trigger phrases appear as whole words/phrases in the query.
             Word-boundary matching prevents false positives such as "vs" firing
             inside "devs" or "hey" firing inside "they".
@@ -152,12 +173,19 @@ class PromptCueClassifier:
                 basis = PCUE_BASIS_LABEL_MATCH
 
             else:
-                matched = [phrase for phrase, pat in trigger_pats if pat.search(lowered)]
+                matched = [
+                    phrase for phrase, pat in trigger_pats
+                    if pat.search(lowered) and not self._is_negated(phrase, lowered)
+                ]
                 if matched:
                     # Longest match wins — proxy for trigger specificity.
                     best        = max(matched, key=len)
                     specificity = min(len(best) / 35.0, 1.0)   # normalise; 35 chars ≈ long trigger
-                    score = round(0.60 + 0.25 * specificity, 4)
+                    # Each additional matched trigger adds a small confidence bonus
+                    # (+0.03 per extra, capped at +0.06).  Matching both "compare"
+                    # and "pros and cons" is a stronger signal than either alone.
+                    bonus = min((len(matched) - 1) * 0.03, 0.06)
+                    score = round(0.60 + 0.25 * specificity + bonus, 4)
                     basis = PCUE_BASIS_TRIGGER_MATCH
                 else:
                     # Soft word-overlap fallback across all type vocabulary.
@@ -200,7 +228,8 @@ class PromptCueClassifier:
                 ))
                 continue
 
-            best_sim = max(cosine_similarity(query_vec, ex_vec) for ex_vec in example_vecs)
+            sims    = cosine_similarity_batch(query_vec, example_vecs)
+            best_sim = max(sims) if sims else 0.0
             scores.append(PromptCueCandidate(
                 label=definition.label,
                 score=round(min(max(best_sim, 0.0), 1.0), 6),
@@ -209,6 +238,20 @@ class PromptCueClassifier:
 
         scores.sort(key=lambda item: item.score, reverse=True)
         return PromptCueClassificationResult(candidates=scores)
+
+    @staticmethod
+    def _is_negated(phrase: str, lowered: str) -> bool:
+        """Return True when *phrase* appears in *lowered* immediately preceded by a negation word.
+
+        Prevents false-positive trigger matches such as:
+        - "When NOT to use caching" firing on the procedure trigger "to use".
+        - "I don't recommend comparing these" firing on the comparison trigger "compare".
+        """
+        idx = lowered.find(phrase.lower())
+        if idx < 0:
+            return False
+        prefix_words = lowered[:idx].split()
+        return bool(prefix_words) and prefix_words[-1] in _NEGATION_WORDS
 
     def _compile_label_patterns(self) -> dict[str, re.Pattern[str]]:
         """Compile one word-boundary pattern per registered label.

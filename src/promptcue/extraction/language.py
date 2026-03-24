@@ -32,6 +32,14 @@ class PromptCueLanguageDetector:
     def is_loaded(self) -> bool:
         return self._loaded
 
+    def warm_up(self) -> None:
+        """Pre-load the langdetect library at startup.
+
+        No-op when detection is disabled — safe to call in all installs.
+        """
+        if self.enabled:
+            self._ensure_lib()
+
     def detect(self, text: str) -> str:
         """Return a BCP-47 language code (e.g. 'en', 'fr', 'de') or 'unknown'."""
         if not self.enabled or len(text.strip()) < self._MIN_TEXT_LENGTH:

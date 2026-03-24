@@ -29,3 +29,13 @@ class PromptCueActionHint(StrEnum):
     CHECK_RECENCY  = 'should_check_recency'
     CLARIFY        = 'should_clarify'
     CONVERSATIONAL = 'should_respond_conversationally'
+
+
+class PromptCueBasis(StrEnum):
+    """Typed equivalent of the PCUE_BASIS_* constants in constants.py."""
+    LABEL_MATCH     = 'label_match'
+    TRIGGER_MATCH   = 'trigger_match'
+    WORD_OVERLAP    = 'word_overlap'
+    FALLBACK        = 'fallback'
+    SEMANTIC        = 'semantic_similarity'
+    BELOW_THRESHOLD = 'below_threshold'

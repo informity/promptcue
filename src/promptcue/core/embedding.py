@@ -42,7 +42,14 @@ class PromptCueEmbeddingBackend:
         return embeddings.tolist()
 
     def warm_up(self) -> None:
-        """Pre-load the model explicitly. Call this to pay the load cost upfront."""
+        """Pre-load the sentence-transformer model explicitly.
+
+        This method exists for consumers who construct PromptCueEmbeddingBackend
+        directly (e.g. tests, custom pipelines).  In the normal PromptCueAnalyzer
+        path, warm-up is handled by PromptCueClassifier.warm_up() which triggers
+        model loading via _build_example_cache() → encode() → _ensure_model().
+        Calling this method from PromptCueAnalyzer.warm_up() would be redundant.
+        """
         self._ensure_model()
 
     # ==============================================================================
@@ -73,3 +80,23 @@ def cosine_similarity(a: list[float], b: list[float]) -> float:
     if denom == 0.0:
         return 0.0
     return float(np.clip(np.dot(a_arr, b_arr) / denom, 0.0, 1.0))
+
+
+def cosine_similarity_batch(query: list[float], matrix: list[list[float]]) -> list[float]:
+    """Vectorised cosine similarity between *query* and every row of *matrix*.
+
+    All dot products are computed in a single NumPy matrix multiply, which is
+    significantly faster than calling cosine_similarity() in a Python loop when
+    the matrix has many rows (one per example sentence per query type).
+
+    Returns an empty list when *matrix* is empty.
+    """
+    if not matrix:
+        return []
+    q = np.array(query,  dtype=np.float32)
+    m = np.array(matrix, dtype=np.float32)
+    q_norm = np.linalg.norm(q)
+    m_norms = np.linalg.norm(m, axis=1)
+    denom = q_norm * m_norms
+    denom[denom == 0.0] = 1.0   # avoid division by zero; result will be 0 anyway
+    return np.clip((m @ q) / denom, 0.0, 1.0).tolist()

@@ -16,7 +16,7 @@ from promptcue.constants import (
     PCUE_SCOPE_UNKNOWN,
     PCUE_UNKNOWN,
 )
-from promptcue.core.classifier import PromptCueClassificationResult
+from promptcue.core.classifier import PromptCueClassificationResult, _top_margin
 from promptcue.core.registry import PromptCueRegistry
 
 
@@ -66,7 +66,12 @@ class PromptCueDecisionEngine:
                 ambiguity_score      = 1.0,
                 classification_basis = PCUE_BASIS_BELOW_THRESHOLD,
                 scope                = PCUE_SCOPE_UNKNOWN,
-                routing_hints        = {PCUE_HINT_CLARIFICATION: True},
+                routing_hints        = {
+                    PCUE_HINT_CLARIFICATION: True,
+                    PCUE_HINT_RETRIEVAL:     False,
+                    PCUE_HINT_REASONING:     False,
+                    PCUE_HINT_CURRENT_INFO:  False,
+                },
                 action_hints         = {PCUE_ACTION_CLARIFY: True},
             )
 
@@ -74,9 +79,9 @@ class PromptCueDecisionEngine:
             threshold_override if threshold_override is not None
             else self.config.similarity_threshold
         )
-        top          = result.candidates[0]
-        second_score = result.candidates[1].score if len(result.candidates) > 1 else 0.0
-        margin       = top.score - second_score
+        top, margin  = _top_margin(result.candidates)
+        # top is always non-None here: the no-candidates guard above already returned.
+        assert top is not None
         ambiguity    = max(0.0, min(1.0, 1.0 - margin))
         unclear      = top.score < threshold
 
@@ -87,7 +92,12 @@ class PromptCueDecisionEngine:
                 ambiguity_score      = ambiguity,
                 classification_basis = PCUE_BASIS_BELOW_THRESHOLD,
                 scope                = PCUE_SCOPE_UNKNOWN,
-                routing_hints        = {PCUE_HINT_CLARIFICATION: True},
+                routing_hints        = {
+                    PCUE_HINT_CLARIFICATION: True,
+                    PCUE_HINT_RETRIEVAL:     False,
+                    PCUE_HINT_REASONING:     False,
+                    PCUE_HINT_CURRENT_INFO:  False,
+                },
                 action_hints         = {PCUE_ACTION_CLARIFY: True},
             )
 

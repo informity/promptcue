@@ -23,10 +23,15 @@ PCUE_SCHEMA_VERSION   = '1.0'
 # Sentinel / placeholder values
 # ==============================================================================
 
+# PCUE_UNKNOWN is the sentinel for primary_query_type when the query could not be
+# classified above the confidence threshold.  Do not use it for scope — use
+# PromptCueScope.UNKNOWN (or PCUE_SCOPE_UNKNOWN below) for that field instead,
+# so that the two can evolve independently if scope values ever diverge.
 PCUE_UNKNOWN          = 'unknown'
 
 # ==============================================================================
 # Classification basis strings — explain how the top candidate was matched
+# Typed equivalent: PromptCueBasis (StrEnum) in models/enums.py
 # ==============================================================================
 
 PCUE_BASIS_LABEL_MATCH     = 'label_match'         # verbatim label found in query (0.90)
@@ -53,6 +58,10 @@ PCUE_SCOPE_BROAD       = 'broad'
 PCUE_SCOPE_FOCUSED     = 'focused'
 PCUE_SCOPE_COMPARATIVE = 'comparative'
 PCUE_SCOPE_EXPLORATORY = 'exploratory'
+# PCUE_SCOPE_UNKNOWN is the sentinel for the scope field specifically.  Its value
+# happens to be identical to PCUE_UNKNOWN today, but they are kept as separate
+# constants so a change to one does not silently affect the other.  Prefer
+# PromptCueScope.UNKNOWN in new internal code.
 PCUE_SCOPE_UNKNOWN     = 'unknown'
 
 # ==============================================================================

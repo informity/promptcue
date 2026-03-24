@@ -147,6 +147,9 @@ query_types:
       - what is the best option for
       - help me decide
       - what do you suggest
+      - what is the best way to
+      - best way to handle
+      - best approach to
     examples:
       - which option should I use for my use case
       - what would you recommend for this situation
@@ -168,7 +171,7 @@ query_types:
       should_compare:                   true
       should_direct_answer:             true
       should_check_recency:             false
-      should_clarify:                   true
+      should_clarify:                   false
       should_respond_conversationally:  false
 
   - label: troubleshooting
@@ -286,7 +289,7 @@ query_types:
       should_survey:                    false
       should_enumerate:                 false
       should_compare:                   false
-      should_direct_answer:             false
+      should_direct_answer:             true   # analysis produces a single coherent evaluation
       should_check_recency:             false
       should_clarify:                   false
       should_respond_conversationally:  false
@@ -415,7 +418,7 @@ query_types:
       should_compare:                   false
       should_direct_answer:             true
       should_check_recency:             false
-      should_clarify:                   true
+      should_clarify:                   false
       should_respond_conversationally:  false
 
   - label: validation
@@ -482,14 +485,10 @@ query_types:
       - good evening
       - thank you
       - thanks for
-      - thanks
       - cheers
       - how are you
       - goodbye
-      - got it
-      - ok thanks
       - great thanks
-      - awesome
     examples:
       - hello how are you doing today
       - thanks that was really helpful

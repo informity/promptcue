@@ -3,14 +3,14 @@
 
 from __future__ import annotations
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 from promptcue.constants import (
     PCUE_BASIS_FALLBACK,
     PCUE_SCHEMA_VERSION,
-    PCUE_SCOPE_UNKNOWN,
     PCUE_UNKNOWN,
 )
+from promptcue.models.enums import PromptCueScope
 
 
 class PromptCueCandidate(BaseModel):
@@ -35,10 +35,21 @@ class PromptCueKeyword(BaseModel):
 
 class PromptCueLinguistics(BaseModel):
     """Linguistic features extracted from a query."""
-    main_verbs:     list[str]        = Field(default_factory=list)
-    noun_phrases:   list[str]        = Field(default_factory=list)
-    named_entities: list[str]        = Field(default_factory=list)  # plain text, backward compat
+    main_verbs:     list[str]             = Field(default_factory=list)
+    noun_phrases:   list[str]             = Field(default_factory=list)
+    named_entities: list[str]             = Field(default_factory=list)  # plain text, compat alias
     entities:       list[PromptCueEntity] = Field(default_factory=list)  # structured (text + type)
+
+    @model_validator(mode='before')
+    @classmethod
+    def _sync_named_entities(cls, data: dict) -> dict:
+        """Keep named_entities in sync with entities when only entities is provided."""
+        if not data.get('named_entities') and data.get('entities'):
+            data['named_entities'] = [
+                e['text'] if isinstance(e, dict) else e.text
+                for e in data['entities']
+            ]
+        return data
 
 
 class PromptCueQueryObject(BaseModel):
@@ -64,7 +75,7 @@ class PromptCueQueryObject(BaseModel):
     # ==============================================================================
     # Query dimensions
     # ==============================================================================
-    scope:       str = PCUE_SCOPE_UNKNOWN  # broad | focused | comparative | exploratory | unknown
+    scope: PromptCueScope = PromptCueScope.UNKNOWN
 
     # ==============================================================================
     # Linguistic enrichment (populated when enable_linguistic_extraction=True)

@@ -49,6 +49,7 @@ class PromptCueAnalyzer:
         - Sentence-transformer embedding model (when enable_semantic_scoring=True)
         - spaCy language model (when enable_linguistic_extraction=True)
         - KeyBERT model (when enable_keyword_extraction=True)
+        - langdetect library (when enable_language_detection=True)
 
         Safe to call when none of the above are enabled — each component
         guards internally and becomes a no-op when disabled.
@@ -56,6 +57,7 @@ class PromptCueAnalyzer:
         self.classifier.warm_up()
         self.linguistic_extractor.warm_up()
         self.keyword_extractor.warm_up()
+        self.language_detector.warm_up()
 
     async def warm_up_async(self) -> None:
         """Async equivalent of warm_up() — safe to await from any async startup handler.

@@ -77,3 +77,11 @@ def test_validation_rejects_empty_examples() -> None:
 def test_validation_rejects_non_bool_routing_hint() -> None:
     with pytest.raises(PromptCueRegistryError, match='must be a boolean'):
         PromptCueRegistry(definitions=[_defn(routing_hints={'needs_retrieval': 'yes'})])  # type: ignore[arg-type]
+
+
+@pytest.mark.parametrize('content', ['', 'null', '- item'])
+def test_registry_rejects_invalid_yaml_structure(tmp_path, content: str) -> None:
+    p = tmp_path / 'bad.yaml'
+    p.write_text(content)
+    with pytest.raises(PromptCueRegistryError):
+        PromptCueRegistry.from_yaml(p)

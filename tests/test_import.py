@@ -1,6 +1,7 @@
 from promptcue import (
     PromptCueActionHint,
     PromptCueAnalyzer,
+    PromptCueBasis,
     PromptCueConfig,
     PromptCueQueryObject,
     PromptCueRoutingHint,
@@ -18,3 +19,5 @@ def test_enum_imports() -> None:
     assert PromptCueScope.BROAD                        == 'broad'
     assert PromptCueRoutingHint.NEEDS_RETRIEVAL        == 'needs_retrieval'
     assert PromptCueActionHint.CONVERSATIONAL          == 'should_respond_conversationally'
+    assert PromptCueBasis.TRIGGER_MATCH                == 'trigger_match'
+    assert PromptCueBasis.BELOW_THRESHOLD              == 'below_threshold'
