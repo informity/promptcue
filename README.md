@@ -1,7 +1,7 @@
 # PromptCue — Prompt Intent Classifier for LLM Pipelines
 
-[![PyPI version](https://img.shields.io/badge/pypi-0.1.1-orange.svg)](https://pypi.org/project/promptcue/)
-[![Python versions](https://img.shields.io/badge/python-3.13%2B-blue.svg)](https://pypi.org/project/promptcue/)
+[![PyPI version](https://img.shields.io/pypi/v/promptcue.svg)](https://pypi.org/project/promptcue/)
+[![Python versions](https://img.shields.io/pypi/pyversions/promptcue.svg)](https://pypi.org/project/promptcue/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![CI](https://github.com/informity/informity-promptcue/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/informity/informity-promptcue/actions/workflows/ci.yml)
 
