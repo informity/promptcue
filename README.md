@@ -84,6 +84,64 @@ pip install -e ".[dev]"
 
 ---
 
+## Production deployment
+
+PromptCue requires `sentence-transformers` to produce production-quality results.
+The deterministic-only path (`pip install promptcue`, no `[semantic]`) achieves
+approximately 40–50% accuracy on naturalistic queries and is **not a supported
+production configuration** — it is suitable for evaluation or development only.
+
+Every production deployment must:
+
+1. Install `pip install "promptcue[semantic]"`.
+2. Pre-download the model **before** the service starts — not on first query.
+3. Call `warm_up()` (or `warm_up_async()`) at startup and gate readiness on it succeeding.
+
+If the model cannot be loaded, PromptCue raises `PromptCueModelLoadError` immediately.
+It never silently falls back to deterministic-only mode — a misconfigured deployment
+fails loudly at startup rather than producing quietly wrong results at query time.
+
+### Model cache location
+
+By default the model is stored in HuggingFace's standard cache (`~/.cache/huggingface/`).
+For deployments that cannot rely on the default cache, set the path explicitly:
+
+```python
+from pathlib import Path
+from promptcue import PromptCueAnalyzer, PromptCueConfig
+
+analyzer = PromptCueAnalyzer(PromptCueConfig(
+    model_cache_dir=Path('/opt/models')
+))
+analyzer.warm_up()   # raises PromptCueModelLoadError if the model is not at that path
+```
+
+Or via environment variable — no code change required:
+
+```bash
+export PROMPTCUE_MODEL_CACHE=/opt/models
+```
+
+### Deployment patterns
+
+| Environment | Model management approach |
+|---|---|
+| Local dev | Leave `model_cache_dir` unset — HuggingFace downloads on first `warm_up()` |
+| EC2 / EBS | Pre-download to EBS volume; set `HF_HOME=/opt/models` or `model_cache_dir` |
+| Lambda (container image) | Bake model into Docker image at build time — **required**, Lambda `/tmp` is ephemeral |
+| Lambda (EFS mount) | Pre-populate EFS volume; set `model_cache_dir=Path('/mnt/models')` |
+| Docker / CI | Download during image build; volume-mount for local dev |
+
+For Lambda container images, bake the model in at build time:
+
+```dockerfile
+FROM python:3.11-slim
+RUN pip install "promptcue[semantic]"
+ENV HF_HOME=/app/models
+RUN python -c "from sentence_transformers import SentenceTransformer; \
+    SentenceTransformer('all-MiniLM-L6-v2')"
+```
+
 ## Quick start
 
 ### Basic — no ML dependencies required
@@ -214,6 +272,7 @@ PromptCueAnalyzer(config: PromptCueConfig | None = None)
 | Field | Type | Default | Description |
 |---|---|---|---|
 | `registry_path` | `Path \| None` | `None` | Custom YAML registry path; uses bundled default when `None` |
+| `model_cache_dir` | `Path \| None` | env / `None` | Directory where the sentence-transformers model is cached. Falls back to `PROMPTCUE_MODEL_CACHE` env var, then HuggingFace default (`~/.cache/huggingface/`) |
 | `similarity_threshold` | `float` | `0.55` | Minimum score for a deterministic match to be accepted |
 | `semantic_similarity_threshold` | `float` | `0.20` | Minimum score for a semantic match to be accepted |
 | `ambiguity_margin` | `float` | `0.08` | Min gap between top-2 scores before clarification is flagged |
@@ -237,10 +296,13 @@ PromptCueAnalyzer(config: PromptCueConfig | None = None)
 | `input_text` | `str` | Original query as provided by the caller |
 | `normalized_text` | `str` | Unicode-normalised, whitespace-collapsed query |
 | `language` | `str` | BCP-47 language code (`"en"`) or `"unknown"` when detection is off |
+| `is_continuation` | `bool` | `True` when the query continues an ongoing conversation (e.g. "what about X?", "and for Y?") |
 | `primary_query_type` | `str` | Top classified query type label, or `"unknown"` |
-| `classification_basis` | `str` | How the result was reached: `label_match`, `trigger_match`, `word_overlap`, `fallback`, `semantic_similarity`, `below_threshold` |
+| `classification_basis` | `str` | How the result was reached: `trigger_match`, `word_overlap`, `semantic_similarity`, `below_threshold` |
 | `candidate_query_types` | `list[PromptCueCandidate]` | All types ranked by score |
+| `runner_up` | `PromptCueCandidate \| None` | Second-ranked candidate; `None` when fewer than two candidates exist |
 | `confidence` | `float` | Score of the top candidate (0.0–1.0) |
+| `confidence_band` | `str` | Coarse confidence tier: `high`, `medium`, or `low` |
 | `ambiguity_score` | `float` | How close the top-2 candidates are (0.0 = clear, 1.0 = identical) |
 | `scope` | `str` | Query scope: `broad`, `focused`, `comparative`, `exploratory`, or `unknown` |
 | `main_verbs` | `list[str]` | Root verbs extracted by spaCy (empty when enrichment is off) |
