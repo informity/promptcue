@@ -40,7 +40,7 @@ dependencies = [
 Homepage      = "https://github.com/informity/informity-promptcue"
 Source        = "https://github.com/informity/informity-promptcue"
 "Bug Tracker" = "https://github.com/informity/informity-promptcue/issues"
-Changelog     = "https://github.com/informity/informity-promptcue/blob/main/CHANGELOG.md"
+Changelog     = "https://github.com/informity/informity-promptcue/blob/master/CHANGELOG.md"
 
 [project.optional-dependencies]
 semantic = [
