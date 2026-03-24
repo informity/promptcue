@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import threading
+from typing import Any
 
 from promptcue.models.schema import PromptCueKeyword
 
@@ -23,7 +24,7 @@ class PromptCueKeywordExtractor:
     def __init__(self, enabled: bool = False, max_keywords: int = 8) -> None:
         self.enabled      = enabled
         self.max_keywords = max_keywords
-        self._kw_model    = None
+        self._kw_model:   Any = None  # KeyBERT instance; typed as Any to avoid hard dep
         self._lock        = threading.Lock()
 
     @property
@@ -48,7 +49,7 @@ class PromptCueKeywordExtractor:
             return []
 
         self._ensure_model()
-        raw: list[tuple[str, float]] = self._kw_model.extract_keywords(  # type: ignore[union-attr]
+        raw: list[tuple[str, float]] = self._kw_model.extract_keywords(
             text,
             keyphrase_ngram_range = (1, 2),
             stop_words            = 'english',

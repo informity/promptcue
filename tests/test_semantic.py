@@ -10,7 +10,6 @@ sentence_transformers = pytest.importorskip(
 )
 
 from promptcue import PromptCueAnalyzer, PromptCueConfig  # noqa: E402
-from promptcue.constants import PCUE_BASIS_SEMANTIC  # noqa: E402
 
 # ==============================================================================
 # Fixtures

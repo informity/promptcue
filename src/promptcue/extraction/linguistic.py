@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import threading
+from typing import Any
 
 from promptcue.models.schema import PromptCueEntity, PromptCueLinguistics
 
@@ -21,7 +22,7 @@ class PromptCueLinguisticExtractor:
     def __init__(self, enabled: bool = False, model_name: str = 'en_core_web_sm') -> None:
         self.enabled    = enabled
         self.model_name = model_name
-        self._nlp       = None
+        self._nlp: Any  = None  # spacy.Language instance; typed as Any to avoid hard dep
         self._lock      = threading.Lock()
 
     @property
@@ -46,7 +47,7 @@ class PromptCueLinguisticExtractor:
             return PromptCueLinguistics()
 
         self._ensure_model()
-        doc = self._nlp(text)  # type: ignore[call-arg]
+        doc = self._nlp(text)
 
         # Root verbs only — the grammatical head of the main clause.
         main_verbs = [

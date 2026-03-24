@@ -31,13 +31,20 @@ class PromptCueRegistry:
     list of PromptCueTypeDefinition objects (for testing).  Validates on construction.
     """
 
+    # Class-level annotations so mypy resolves instance attributes set in from_yaml()
+    # via cls.__new__(), which bypasses __init__.
+    definitions: list[PromptCueTypeDefinition]
+    _by_label:   dict[str, PromptCueTypeDefinition]
+
     def __init__(self, definitions: list[PromptCueTypeDefinition] | None = None) -> None:
         if definitions is None:
             loaded           = self.from_yaml(PCUE_DEFAULT_REGISTRY)
             self.definitions = loaded.definitions
+            self._by_label   = loaded._by_label
         else:
             self._validate(definitions)
             self.definitions = definitions
+            self._by_label   = {defn.label: defn for defn in definitions}
 
     # ==============================================================================
     # Queries
@@ -49,10 +56,7 @@ class PromptCueRegistry:
 
     def get_by_label(self, label: str) -> PromptCueTypeDefinition | None:
         """Return the definition for *label*, or None if not found."""
-        for definition in self.definitions:
-            if definition.label == label:
-                return definition
-        return None
+        return self._by_label.get(label)
 
     # ==============================================================================
     # Loading
@@ -80,6 +84,7 @@ class PromptCueRegistry:
         instance = cls.__new__(cls)
         instance._validate(definitions)
         instance.definitions = definitions
+        instance._by_label   = {defn.label: defn for defn in definitions}
         return instance
 
     # ==============================================================================

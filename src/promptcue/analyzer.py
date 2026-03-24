@@ -79,7 +79,7 @@ class PromptCueAnalyzer:
     def analyze(self, text: str) -> PromptCueQueryObject:
         """Analyze a natural-language query and return a structured PromptCueQueryObject."""
         normalized = normalize_text(text)
-        language   = self.language_detector.detect(text)
+        language   = self.language_detector.detect(normalized)
 
         classification = self.classifier.classify(normalized)
 

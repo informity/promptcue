@@ -65,7 +65,8 @@ def test_analysis_query_is_exploratory_scope() -> None:
 def test_unknown_query_scope_is_unknown() -> None:
     # Gibberish with semantic disabled — deterministic scorer returns nothing above
     # threshold, so the decision engine should resolve to unknown scope.
-    result = PromptCueAnalyzer(PromptCueConfig(enable_semantic_scoring=False)).analyze('xyzzy qrstuv blorgh')
+    config = PromptCueConfig(enable_semantic_scoring=False)
+    result = PromptCueAnalyzer(config).analyze('xyzzy qrstuv blorgh')
     assert result.scope == PCUE_SCOPE_UNKNOWN
 
 
