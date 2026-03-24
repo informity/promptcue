@@ -37,6 +37,14 @@ query_types:
       - bring me up to speed
       - get up to speed on
       - up to speed on
+      - walk me through the landscape
+      - walk me through the ecosystem
+      - walk me through the complete
+      - walk me through everything
+      - entire landscape
+      - complete landscape
+      - full landscape
+      - the whole landscape
     examples:
       - give me an overview of this topic
       - tell me everything you know about this subject
@@ -50,6 +58,8 @@ query_types:
       - what are all the important things to know about this subject
       - I have been out of touch with this area — bring me up to speed on where things stand
       - I need to get up to speed on this — explain what it is, how it works, and the key things to know
+      - I am completely new to this area and want to understand the full landscape — what it is, the key tools, and the core practices
+      - help me understand the complete picture of this field including all the major tools, concepts, and how they fit together
     routing_hints:
       needs_retrieval:    true
       needs_reasoning:    false
@@ -70,6 +80,8 @@ query_types:
       - give me a broad overview of this entire topic                   # → coverage
       - compare these two options and explain the differences           # → comparison
       - how do I install and configure this step by step                # → procedure
+      - what does setting this up involve or require                    # → procedure
+      - what does this new capability or feature actually enable        # → update
     triggers:
       - what is
       - who is
@@ -87,6 +99,8 @@ query_types:
       - what file types
       - what years are covered
       - what kind of documents
+      - can you clarify what
+      - clarify what
     examples:
       - define this term or concept for me
       - what does this word or phrase mean
@@ -135,6 +149,7 @@ query_types:
       - how do they differ
       - what sets apart
       - walk me through the trade-offs
+      - in what ways does
     examples:
       - compare these two options and explain the differences
       - what is the difference between these two things
@@ -178,6 +193,7 @@ query_types:
       - what is the best option for
       - help me decide
       - what do you suggest
+      - would you suggest
       - what is the best way to
       - best way to handle
       - what is the best approach to
@@ -187,6 +203,15 @@ query_types:
       - which tool should
       - what should I use for
       - what should we use for
+      - which should we adopt
+      - which should we go with
+      - which should we pick
+      - what approach would you take
+      - what approach would you recommend
+      - approach would you take
+      - makes the most sense for
+      - makes the most sense to
+      - makes the most sense
     examples:
       - which option should I use for my use case
       - what would you recommend for this situation
@@ -198,6 +223,10 @@ query_types:
       - I need you to make a recommendation based on my constraints
       - given everything I described what is the right choice here
       - what is the single best option for what I am trying to do
+      - which tool or service would you suggest for this specific use case
+      - what approach would you take to solve this problem given our constraints
+      - which option would you go with for a team and situation like ours
+      - we need to pick a solution — what would you go with and why
     routing_hints:
       needs_retrieval:    true
       needs_reasoning:    true
@@ -249,6 +278,9 @@ query_types:
       - things stop working under certain conditions and I need to diagnose the root cause
       - these work fine on their own but fail when combined or run together and I cannot explain why
       - the behavior is non-deterministic — it fails sometimes and passes other times with no clear pattern
+      - our metrics or error rates spiked unexpectedly right after a deployment and I need to find out why
+      - something stopped working correctly overnight with no changes and I need to identify the root cause
+      - it was behaving fine until recently and now it is suddenly broken — I need to track down the cause
     routing_hints:
       needs_retrieval:    true
       needs_reasoning:    true
@@ -269,6 +301,7 @@ query_types:
       - why is this failing and how do I fix it                         # → troubleshooting
       - which option should I use for my situation                      # → recommendation
       - give me a comprehensive overview of this entire subject         # → coverage
+      - walk me through the entire landscape or ecosystem of this area  # → coverage
     triggers:
       - how do I
       - how to
@@ -281,6 +314,12 @@ query_types:
       - process to follow
       - process I should follow
       - what sequence
+      - right sequence to follow
+      - right sequence
+      - what does that setup look like
+      - what does that setup involve
+      - what does setting that up
+      - what does setting up
     examples:
       - how do I set this up step by step
       - walk me through the process of doing this
@@ -333,6 +372,11 @@ query_types:
       - are there any contradictions
       - find any conflicts
       - identify inconsistencies
+      - potential problems with
+      - potential issues with
+      - what are the potential problems
+      - what are the potential issues
+      - what are the possible risks
     examples:
       - analyze this approach and tell me if it is sound
       - evaluate the strengths and weaknesses of this design
@@ -348,6 +392,10 @@ query_types:
       - are there contradictions or inconsistencies across these sources
       - identify and flag any conflicts between the sources
       - identify where these sources disagree with each other
+      - is the approach we are currently using sustainable as we continue to scale
+      - is this level of process or tooling appropriate for a project and team of our size
+      - what are the potential failure modes or hidden problems with the way we are doing this now
+      - we have been running with this setup — is this a serious long-term risk we need to address
     routing_hints:
       needs_retrieval:    false
       needs_reasoning:    true
@@ -372,6 +420,12 @@ query_types:
       - what is the exact definition or meaning of this term            # → lookup
       - give me a broad overview of this entire topic area              # → coverage
       - is my understanding of how this works actually correct          # → validation
+      - is our current approach to scaling or operating this sustainable long term # → analysis
+      - which tool or service should we choose or adopt for a specific use case    # → recommendation
+      - our system started failing or behaving unexpectedly overnight               # → troubleshooting
+      - I need a broad understanding of all the tools and categories in this space  # → coverage
+      - is this level of engineering process justified for a startup of our size    # → analysis
+      - our error rate or cache hit rate changed unexpectedly after deployment      # → troubleshooting
     triggers:
       - what is the latest
       - recent changes to
@@ -381,6 +435,9 @@ query_types:
       - any recent updates
       - what changed in
       - recently released
+      - now supports
+      - recently added support
+      - just released
     examples:
       - what is the latest or most recent version of this
       - what has changed in the newest release
@@ -438,6 +495,10 @@ query_types:
       - explain what it does
       - how does it work briefly
       - in a nutshell
+      - concise explanation
+      - quick explanation of
+      - give me a concise
+      - give me a quick explanation
     examples:
       - summarize what was just shared or discussed
       - give me a summary of the content I just provided
@@ -487,6 +548,11 @@ query_types:
       - give me a template
       - produce a
       - compose a
+      - create a
+      - create an
+      - put together a
+      - come up with a
+      - build me a
     examples:
       - write me a short paragraph or piece of text on this topic from scratch
       - write me an original message or email on this subject
@@ -500,6 +566,10 @@ query_types:
       - draft a new piece of writing for me that does not exist yet
       - write the opening blurb or documentation section for this project from scratch
       - generate original written content for me — there is no source material to condense
+      - create a reusable class, data model, or type definition for this use case from scratch
+      - put together a template or scaffold I can start working from — there is nothing existing yet
+      - come up with a complete working example I can copy and adapt for my own project
+      - build me a starter script, configuration file, or boilerplate for this setup from scratch
     routing_hints:
       needs_retrieval:    false
       needs_reasoning:    true
@@ -520,6 +590,7 @@ query_types:
       - analyze this design and give me your expert opinion on it       # → analysis
       - is this approach overkill for a small project                   # → analysis
       - is this a good architectural decision for my use case            # → analysis
+      - what are the potential problems or risks of this approach        # → analysis
       - why is this failing and how do I resolve the error              # → troubleshooting
       - give me a step by step guide to setting this up                 # → procedure
     triggers:
@@ -549,6 +620,13 @@ query_types:
       - are there any problems with
       - are there any issues with
       - cryptographically sound
+      - is this sufficient
+      - is this setup sufficient
+      - is this configuration sufficient
+      - is this a security risk
+      - is this a vulnerability
+      - secure enough
+      - is this safe
     examples:
       - is this claim factually correct or am I wrong about this
       - can you verify whether what I just stated is actually true
@@ -564,6 +642,10 @@ query_types:
       - I have always assumed this is the right default — is that actually true or does it depend on the situation
       - someone told me this is always the better choice — is that claim accurate or is it an oversimplification
       - my assumption has been that this approach is always safe — is that a safe thing to rely on
+      - we are using a cryptographically weak or deprecated algorithm for passwords — is this actually a security problem
+      - our application builds queries by concatenating raw user input directly — is this safe or does it introduce a vulnerability
+      - is our current infrastructure or service configuration sufficient to handle the expected load
+      - I have been relying on this practice — is it actually safe or have I been doing it wrong all along
     routing_hints:
       needs_retrieval:    true
       needs_reasoning:    true
