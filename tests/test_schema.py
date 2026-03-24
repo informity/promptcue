@@ -126,7 +126,16 @@ def test_entities_empty_when_linguistic_disabled() -> None:
     assert result.entities == []
 
 
-spacy = pytest.importorskip('spacy', reason='spaCy not installed — skipping entity tests')
+def _spacy_model_available() -> bool:
+    try:
+        import spacy
+        spacy.load('en_core_web_sm')
+        return True
+    except (ImportError, OSError):
+        return False
+
+if not _spacy_model_available():
+    pytest.skip('spaCy or en_core_web_sm model not available — skipping entity tests', allow_module_level=True)
 
 
 def test_entities_are_promptcue_entity_instances() -> None:

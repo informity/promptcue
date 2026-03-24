@@ -1,15 +1,14 @@
-# PromptCue — Query Language Understanding Engine
+# PromptCue — Prompt Intent Classifier for LLM Pipelines
 
 [![PyPI version](https://img.shields.io/badge/pypi-0.1.0-orange.svg)](https://pypi.org/project/promptcue/)
 [![Python versions](https://img.shields.io/badge/python-3.13%2B-blue.svg)](https://pypi.org/project/promptcue/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![CI](https://github.com/informity/informity-promptcue/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/informity/informity-promptcue/actions/workflows/ci.yml)
 
-PromptCue turns a raw natural-language query into a structured understanding object.
-It classifies the query type, scores confidence, extracts routing directives, and
-optionally enriches the result with linguistic features, named entities, and keyphrases.
-Designed to sit in front of LLM pipelines, RAG systems, and query routers — any place
-where knowing *what the user is trying to do* changes how you respond.
+PromptCue classifies the intent behind a natural-language prompt and returns structured
+routing cues — telling your LLM pipeline, RAG system, or query router not just *what*
+the user asked, but *how* it should be answered: retrieve, reason, compare, enumerate,
+check recency, or ask for clarification.
 
 ---
 
