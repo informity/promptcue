@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import re
 import threading
 from dataclasses import dataclass
 
@@ -40,6 +41,14 @@ class PromptCueClassifier:
         # Cached per-label example embeddings; populated lazily on first semantic classify.
         self._example_cache: dict[str, list[list[float]]] = {}
         self._cache_lock       = threading.Lock()
+        # Pre-compiled word-boundary patterns — built once at init, reused on every
+        # classify() call.  Prevents false positives from substring containment:
+        # e.g. "validation" inside "invalidation", "generation" inside "degeneration",
+        # "vs" inside "devs", "hey" inside "they".
+        self._label_patterns:   dict[str, re.Pattern[str]]        = self._compile_label_patterns()
+        self._trigger_patterns: dict[str, list[tuple[str, re.Pattern[str]]]] = (
+            self._compile_trigger_patterns()
+        )
 
     # ==============================================================================
     # Public
@@ -101,10 +110,14 @@ class PromptCueClassifier:
         """Score every registered type against *text* using three tiers:
 
         Tier 1 — label_match (0.90):
-            The type label itself appears verbatim in the query.
+            The type label itself appears as a whole word in the query.
+            Word-boundary matching prevents false positives such as "validation"
+            firing inside "invalidation" or "generation" inside "degeneration".
 
         Tier 2 — trigger_match (0.60–0.85):
-            One or more trigger phrases are substrings of the query.
+            One or more trigger phrases appear as whole words/phrases in the query.
+            Word-boundary matching prevents false positives such as "vs" firing
+            inside "devs" or "hey" firing inside "they".
             Score is proportional to the length of the longest matching trigger:
             short/vague triggers ("how do I") score lower than long/specific ones
             ("how do I configure and deploy"), so overlapping triggers resolve
@@ -127,14 +140,15 @@ class PromptCueClassifier:
         query_words: frozenset[str] = frozenset(w for w in lowered.split() if len(w) > 2)
 
         for definition in self.registry.definitions:
-            match_phrases = definition.triggers if definition.triggers else definition.examples
+            label_pat     = self._label_patterns[definition.label]
+            trigger_pats  = self._trigger_patterns[definition.label]
 
-            if definition.label.lower() in lowered:
+            if label_pat.search(lowered):
                 score = 0.90
                 basis = PCUE_BASIS_LABEL_MATCH
 
             else:
-                matched = [p for p in match_phrases if p.lower() in lowered]
+                matched = [phrase for phrase, pat in trigger_pats if pat.search(lowered)]
                 if matched:
                     # Longest match wins — proxy for trigger specificity.
                     best        = max(matched, key=len)
@@ -196,6 +210,33 @@ class PromptCueClassifier:
 
         scores.sort(key=lambda item: item.score, reverse=True)
         return PromptCueClassificationResult(candidates=scores)
+
+    def _compile_label_patterns(self) -> dict[str, re.Pattern[str]]:
+        """Compile one word-boundary pattern per registered label.
+
+        Using \\b ensures that e.g. "validation" does not match inside
+        "invalidation" and "generation" does not match inside "degeneration".
+        """
+        return {
+            defn.label: re.compile(r'\b' + re.escape(defn.label.lower()) + r'\b')
+            for defn in self.registry.definitions
+        }
+
+    def _compile_trigger_patterns(self) -> dict[str, list[tuple[str, re.Pattern[str]]]]:
+        """Compile one word-boundary pattern per trigger phrase per type.
+
+        Using \\b ensures that e.g. "vs" does not match inside "devs" or "revs",
+        "hey" does not match inside "they", and "assess" does not match inside
+        "reassess".  Patterns are compiled once and reused on every classify() call.
+        """
+        result: dict[str, list[tuple[str, re.Pattern[str]]]] = {}
+        for defn in self.registry.definitions:
+            phrases = defn.triggers if defn.triggers else defn.examples
+            result[defn.label] = [
+                (phrase, re.compile(r'\b' + re.escape(phrase.lower()) + r'\b'))
+                for phrase in phrases
+            ]
+        return result
 
     def _build_example_cache(self) -> dict[str, list[list[float]]]:
         """Build and return the per-label example embedding cache.

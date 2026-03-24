@@ -27,6 +27,9 @@ query_types:
       - broad overview
       - all about
       - full picture
+      - bring me up to speed
+      - get up to speed on
+      - up to speed on
     examples:
       - give me an overview of this topic
       - tell me everything you know about this subject
@@ -38,6 +41,8 @@ query_types:
       - I want a complete high-level understanding of this topic end to end
       - give me a comprehensive overview covering all the major aspects of this
       - what are all the important things to know about this subject
+      - I have been out of touch with this area — bring me up to speed on where things stand
+      - I need to get up to speed on this — explain what it is, how it works, and the key things to know
     routing_hints:
       needs_retrieval:    true
       needs_reasoning:    false
@@ -103,6 +108,7 @@ query_types:
       - similarities between
       - how do they differ
       - what sets apart
+      - walk me through the trade-offs
     examples:
       - compare these two options and explain the differences
       - what is the difference between these two things
@@ -192,6 +198,8 @@ query_types:
       - I cannot get past this error no matter what I try
       - the output is wrong and I need to figure out what is causing it
       - things stop working under certain conditions and I need to diagnose the root cause
+      - these work fine on their own but fail when combined or run together and I cannot explain why
+      - the behavior is non-deterministic — it fails sometimes and passes other times with no clear pattern
     routing_hints:
       needs_retrieval:    true
       needs_reasoning:    true
@@ -215,6 +223,11 @@ query_types:
       - walk me through
       - guide me through
       - what are the steps
+      - correct sequence
+      - sequence of steps
+      - process to follow
+      - process I should follow
+      - what sequence
     examples:
       - how do I set this up step by step
       - walk me through the process of doing this
@@ -226,6 +239,8 @@ query_types:
       - I need instructions for how to do this from start to finish
       - take me through the whole process one step at a time
       - what do I need to do in order to get this set up and running
+      - what is the correct sequence of steps I should follow for this
+      - what process should I follow to handle this properly from start to finish
     routing_hints:
       needs_retrieval:    true
       needs_reasoning:    true
@@ -327,6 +342,11 @@ query_types:
       - condense this
       - shorten this
       - what were the main points
+      - distil
+      - distill
+      - key findings
+      - main conclusions
+      - what came out of
     examples:
       - summarize what was just shared or discussed
       - give me a summary of the content I just provided
@@ -339,6 +359,10 @@ query_types:
       - summarize the following passage in two or three sentences
       - what were the main points made in that discussion or document
       - take everything above and distil it into the essential points
+      - distil what was discussed into the most important takeaways
+      - what are the key findings from what I just shared
+      - I went through a lot of material — extract the main conclusions for me
+      - I have been reading something long — what are the takeaways I should walk away with
     routing_hints:
       needs_retrieval:    false
       needs_reasoning:    true
@@ -413,6 +437,11 @@ query_types:
       - confirm whether
       - does it make sense to
       - is it accurate that
+      - is that actually
+      - is that a safe
+      - is that claim
+      - is that always
+      - is that really
     examples:
       - is this claim factually correct or am I wrong about this
       - can you verify whether what I just stated is actually true
@@ -425,6 +454,9 @@ query_types:
       - I have been told this is how it works — is that accurate
       - confirm whether my understanding of this fact is correct
       - I think I know the answer but I want you to verify it for me
+      - I have always assumed this is the right default — is that actually true or does it depend on the situation
+      - someone told me this is always the better choice — is that claim accurate or is it an oversimplification
+      - my assumption has been that this approach is always safe — is that a safe thing to rely on
     routing_hints:
       needs_retrieval:    true
       needs_reasoning:    true
