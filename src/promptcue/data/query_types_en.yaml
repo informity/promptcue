@@ -45,6 +45,16 @@ query_types:
       - complete landscape
       - full landscape
       - the whole landscape
+      - what does that mean for us
+      - what does this mean for us
+      - what does that mean for our
+      - what does this mean for our
+      - does that actually mean for us
+      - does this actually mean for us
+      - does that mean for us
+      - does this mean for us
+      - all the things that absolutely
+      - what are all the things
     examples:
       - give me an overview of this topic
       - tell me everything you know about this subject
@@ -60,6 +70,8 @@ query_types:
       - I need to get up to speed on this — explain what it is, how it works, and the key things to know
       - I am completely new to this area and want to understand the full landscape — what it is, the key tools, and the core practices
       - help me understand the complete picture of this field including all the major tools, concepts, and how they fit together
+      - we just entered this domain for the first time and I need to understand what that actually means for us across all the areas involved
+      - what are all the things we absolutely need to get right for something like this — give me a full map not a single answer
     routing_hints:
       needs_retrieval:    true
       needs_reasoning:    false
@@ -82,6 +94,11 @@ query_types:
       - how do I install and configure this step by step                # → procedure
       - what does setting this up involve or require                    # → procedure
       - what does this new capability or feature actually enable        # → update
+      - what does that mean for us as a company or startup              # → coverage
+      - what does that mean for our team or organisation                # → coverage
+      - what is the most sensible or effective approach to this         # → recommendation
+      - what is the most practical way to handle this situation         # → recommendation
+      - what does that process actually look like end to end            # → procedure
     triggers:
       - what is
       - who is
@@ -101,6 +118,9 @@ query_types:
       - what kind of documents
       - can you clarify what
       - clarify what
+      - what exactly is
+      - what exactly does
+      - what exactly are
     examples:
       - define this term or concept for me
       - what does this word or phrase mean
@@ -143,7 +163,7 @@ query_types:
       - difference between
       - versus
       - vs
-      - how does differ from
+      - differ from
       - pros and cons
       - similarities between
       - how do they differ
@@ -208,6 +228,22 @@ query_types:
       - which should we pick
       - what approach would you take
       - what approach would you recommend
+      - approach would you take
+      - what should X look like
+      - what should our
+      - what should this look like
+      - look like for a
+      - look like for our
+      - look like for the
+      - is it worth adding
+      - is it worth using
+      - is it worth implementing
+      - how should I approach
+      - how should we approach
+      - what is the most sensible
+      - what is the most effective way
+      - what would you prioritize
+      - would you prioritize
       - approach would you take
       - makes the most sense for
       - makes the most sense to
@@ -281,6 +317,8 @@ query_types:
       - our metrics or error rates spiked unexpectedly right after a deployment and I need to find out why
       - something stopped working correctly overnight with no changes and I need to identify the root cause
       - it was behaving fine until recently and now it is suddenly broken — I need to track down the cause
+      - legitimate users are being blocked or affected by something and I need to find the failure mode quickly
+      - something I changed has caused unexpected side-effects I cannot isolate — what are the first things to check
     routing_hints:
       needs_retrieval:    true
       needs_reasoning:    true
@@ -320,6 +358,11 @@ query_types:
       - what does that setup involve
       - what does setting that up
       - what does setting up
+      - what does that process
+      - what does the process
+      - what's actually involved
+      - what is actually involved
+      - actually involved in
     examples:
       - how do I set this up step by step
       - walk me through the process of doing this
@@ -377,6 +420,13 @@ query_types:
       - what are the potential problems
       - what are the potential issues
       - what are the possible risks
+      - how serious is it that
+      - how worried should we be
+      - how risky is this
+      - how risky is it
+      - worth worrying about
+      - should we be worried about
+      - worth being concerned about
     examples:
       - analyze this approach and tell me if it is sound
       - evaluate the strengths and weaknesses of this design
@@ -396,6 +446,10 @@ query_types:
       - is this level of process or tooling appropriate for a project and team of our size
       - what are the potential failure modes or hidden problems with the way we are doing this now
       - we have been running with this setup — is this a serious long-term risk we need to address
+      - is this strategic decision the right call given our current size, resources, and constraints
+      - how risky is this business or product move for a company at our stage of growth
+      - evaluate whether this approach is likely to help or will it just mask a deeper underlying problem
+      - how should we think about this major decision given all the competing priorities and constraints
     routing_hints:
       needs_retrieval:    false
       needs_reasoning:    true
@@ -426,18 +480,29 @@ query_types:
       - I need a broad understanding of all the tools and categories in this space  # → coverage
       - is this level of engineering process justified for a startup of our size    # → analysis
       - our error rate or cache hit rate changed unexpectedly after deployment      # → troubleshooting
+      - how should we debug what changed in user behavior or customer patterns      # → troubleshooting
+      - how do we systematically investigate what changed after this release        # → troubleshooting
     triggers:
       - what is the latest
       - recent changes to
+      - recent changes in
       - what has changed in
       - what is new in
       - latest version of
       - any recent updates
-      - what changed in
       - recently released
       - now supports
       - recently added support
       - just released
+      - what have I missed
+      - what major things have I missed
+      - what changed recently
+      - what has changed lately
+      - what's changed lately
+      - what's changed recently
+      - what's actually changed
+      - what has actually changed
+      - what's actually new
     examples:
       - what is the latest or most recent version of this
       - what has changed in the newest release
@@ -499,6 +564,14 @@ query_types:
       - quick explanation of
       - give me a concise
       - give me a quick explanation
+      - give me the gist
+      - gist of
+      - quick rundown of
+      - run me through what
+      - run me through how
+      - summary of
+      - plain-english summary
+      - brief summary of
     examples:
       - summarize what was just shared or discussed
       - give me a summary of the content I just provided
@@ -553,6 +626,10 @@ query_types:
       - put together a
       - come up with a
       - build me a
+      - knock together
+      - I need a working
+      - I need a complete
+      - I need a reusable
     examples:
       - write me a short paragraph or piece of text on this topic from scratch
       - write me an original message or email on this subject
@@ -570,6 +647,8 @@ query_types:
       - put together a template or scaffold I can start working from — there is nothing existing yet
       - come up with a complete working example I can copy and adapt for my own project
       - build me a starter script, configuration file, or boilerplate for this setup from scratch
+      - I need a short working script or piece of code that does this specific thing from scratch
+      - knock together a quick implementation of this for me — I will clean it up later
     routing_hints:
       needs_retrieval:    false
       needs_reasoning:    true
@@ -627,6 +706,15 @@ query_types:
       - is this a vulnerability
       - secure enough
       - is this safe
+      - is this going to hold up
+      - is this defensible
+      - is that a defensible
+      - is this fundamentally broken
+      - is this process broken
+      - fundamentally broken
+      - does that mean we're not
+      - does that mean we are not
+      - does that mean I was wrong
     examples:
       - is this claim factually correct or am I wrong about this
       - can you verify whether what I just stated is actually true
@@ -646,6 +734,10 @@ query_types:
       - our application builds queries by concatenating raw user input directly — is this safe or does it introduce a vulnerability
       - is our current infrastructure or service configuration sufficient to handle the expected load
       - I have been relying on this practice — is it actually safe or have I been doing it wrong all along
+      - we store sensitive documents with only folder-level permissions and quarterly reviews — is this control actually acceptable
+      - our process for approving vendors relies only on their certification reports without further review — is that defensible
+      - we disable a security control for certain users because of friction — is that ever an acceptable exception
+      - I assumed this compliance practice was fine but I want to verify it is actually correct for our situation
     routing_hints:
       needs_retrieval:    true
       needs_reasoning:    true
