@@ -140,6 +140,26 @@ print(result.keywords)       # [PromptCueKeyword(text='vpc private subnets', wei
 print(result.entities)       # []  (no named entities in this query)
 ```
 
+### In an async application
+
+Both `.warm_up_async()` and `.analyze_async()` delegate to `asyncio.to_thread()`,
+so they are safe to await in FastAPI handlers or any other async framework without
+blocking the event loop.
+
+```python
+import asyncio
+from promptcue import PromptCueAnalyzer
+
+async def main() -> None:
+    analyzer = PromptCueAnalyzer()
+    await analyzer.warm_up_async()
+
+    result = await analyzer.analyze_async('Compare option A and option B')
+    print(result.primary_query_type)   # comparison
+
+asyncio.run(main())
+```
+
 ### Full JSON output
 
 ```python
@@ -150,7 +170,7 @@ print(result.model_dump_json(indent=2))
 
 ## Query types
 
-PromptCue ships with a default registry of 9 query types:
+PromptCue ships with a default registry of 12 query types:
 
 | Label | Scope | Description |
 |---|---|---|
@@ -162,7 +182,10 @@ PromptCue ships with a default registry of 9 query types:
 | `analysis` | exploratory | Deep evaluation of a system, architecture, or decision |
 | `coverage` | broad | Broad overview or "tell me everything" request |
 | `update` | focused | Latest news, releases, or changes |
-| `chitchat` | focused | Social or conversational, not a knowledge query |
+| `summarization` | focused | Condense existing content — provided, referenced, or in-context — into a shorter form |
+| `generation` | focused | Produce entirely new content from scratch with no existing source to condense |
+| `validation` | focused | Verify or fact-check a specific stated claim, assumption, or belief |
+| `chitchat` | broad | Social or conversational, not a knowledge query |
 
 You can replace or extend the registry by pointing `PromptCueConfig.registry_path` at your
 own YAML file — the schema is documented in `src/promptcue/data/query_types.yaml`.
@@ -179,8 +202,10 @@ PromptCueAnalyzer(config: PromptCueConfig | None = None)
 
 | Method | Description |
 |---|---|
-| `.analyze(text: str) -> PromptCueQueryObject` | Analyze a query and return structured result |
-| `.warm_up() -> None` | Pre-load all enabled models at startup |
+| `.analyze(text: str) -> PromptCueQueryObject` | Analyze a query and return a structured result |
+| `.warm_up() -> None` | Pre-load all enabled models at startup to avoid first-query latency |
+| `.analyze_async(text: str) -> PromptCueQueryObject` | Async variant of `.analyze()`; delegates to `asyncio.to_thread()` |
+| `.warm_up_async() -> None` | Async variant of `.warm_up()`; delegates to `asyncio.to_thread()` |
 
 ---
 
@@ -193,6 +218,7 @@ PromptCueAnalyzer(config: PromptCueConfig | None = None)
 | `semantic_similarity_threshold` | `float` | `0.20` | Minimum score for a semantic match to be accepted |
 | `ambiguity_margin` | `float` | `0.08` | Min gap between top-2 scores before clarification is flagged |
 | `semantic_fallback_threshold` | `float` | `0.75` | Deterministic score above which the semantic pass is skipped |
+| `trigger_fallback_threshold` | `float` | `0.60` | When a trigger phrase matched and the score meets this value and the margin is clear, the deterministic result is trusted directly and semantic is skipped |
 | `enable_semantic_scoring` | `bool` | auto | `True` when `sentence-transformers` is installed, else `False` |
 | `embedding_model` | `str` | `all-MiniLM-L6-v2` | HuggingFace model name for semantic scoring |
 | `enable_language_detection` | `bool` | `False` | Detect BCP-47 language code; requires `promptcue[detection]` |
