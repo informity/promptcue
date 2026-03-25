@@ -19,7 +19,7 @@ class PromptCueTypeDefinition:
     description:              str
     triggers:                 list[str]       # short phrases for deterministic substring matching
     examples:                 list[str]       # full sentences for semantic embedding anchors
-    negatives:                list[str]       # sentences this type should NOT match (penalty scoring)
+    negatives:                list[str]       # sentences this type should NOT match (penalty)
     routing_hints:            dict[str, bool]
     scope:                    str             # broad | focused | comparative | exploratory
     action_hints:             dict[str, bool] # response-generation directives

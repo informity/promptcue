@@ -22,7 +22,6 @@ from promptcue.extraction.linguistic import PromptCueLinguisticExtractor
 from promptcue.extraction.normalization import normalize_text
 from promptcue.models.schema import PromptCueQueryObject
 
-
 # ==============================================================================
 # Pre-classification detectors — pure regex, no model dependency
 # ==============================================================================

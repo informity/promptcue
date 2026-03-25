@@ -112,7 +112,7 @@ class PromptCueConfig(BaseModel):
     # ==============================================================================
 
     @classmethod
-    def strict(cls) -> 'PromptCueConfig':
+    def strict(cls) -> PromptCueConfig:
         """High-precision preset: tighter thresholds, wider ambiguity gate.
 
         More queries fall through to 'unknown'; fewer borderline queries are
@@ -128,7 +128,7 @@ class PromptCueConfig(BaseModel):
         )
 
     @classmethod
-    def balanced(cls) -> 'PromptCueConfig':
+    def balanced(cls) -> PromptCueConfig:
         """Default balanced preset — same thresholds as the plain constructor.
 
         Named reference for configuration documentation and comparison tests.
@@ -136,7 +136,7 @@ class PromptCueConfig(BaseModel):
         return cls()
 
     @classmethod
-    def recall_heavy(cls) -> 'PromptCueConfig':
+    def recall_heavy(cls) -> PromptCueConfig:
         """High-recall preset: looser thresholds, narrower ambiguity gate.
 
         Fewer queries return 'unknown'; more borderline queries are classified.

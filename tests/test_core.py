@@ -25,7 +25,6 @@ from promptcue.exceptions import PromptCueModelLoadError
 from promptcue.extraction.normalization import normalize_text
 from promptcue.models.enums import PromptCueConfidenceBand
 
-
 # ==============================================================================
 # Normalization
 # ==============================================================================
@@ -149,11 +148,15 @@ class TestDecisionEngine:
         result = decision_engine.resolve(PromptCueClassificationResult(candidates=[]))
         assert result.routing_hints.get('needs_clarification') is True
 
-    def test_no_candidates_confidence_band_low(self, decision_engine: PromptCueDecisionEngine) -> None:
+    def test_no_candidates_confidence_band_low(
+        self, decision_engine: PromptCueDecisionEngine,
+    ) -> None:
         result = decision_engine.resolve(PromptCueClassificationResult(candidates=[]))
         assert result.confidence_band == PromptCueConfidenceBand.LOW
 
-    def test_below_threshold_returns_unknown(self, decision_engine: PromptCueDecisionEngine) -> None:
+    def test_below_threshold_returns_unknown(
+        self, decision_engine: PromptCueDecisionEngine,
+    ) -> None:
         from promptcue.core.classifier import PromptCueCandidate
         candidates = [
             PromptCueCandidate(label='lookup',     score=0.10, basis='word_overlap'),
@@ -212,13 +215,17 @@ def det_classifier() -> PromptCueClassifier:
 
 class TestClassifierTiers:
 
-    def test_trigger_match_fires_for_known_phrase(self, det_classifier: PromptCueClassifier) -> None:
+    def test_trigger_match_fires_for_known_phrase(
+        self, det_classifier: PromptCueClassifier,
+    ) -> None:
         result = det_classifier._classify_deterministic('how do I set up Redis?')
         top    = result.candidates[0]
         assert top.basis == PCUE_BASIS_TRIGGER_MATCH
         assert top.label == 'procedure'
 
-    def test_trigger_score_proportional_to_length(self, det_classifier: PromptCueClassifier) -> None:
+    def test_trigger_score_proportional_to_length(
+        self, det_classifier: PromptCueClassifier,
+    ) -> None:
         # Longer trigger → higher specificity → higher score.
         # 'how do I' (8 chars) should score higher than a shorter trigger in same type.
         result  = det_classifier._classify_deterministic('how do I configure logging?')
