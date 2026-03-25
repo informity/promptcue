@@ -319,9 +319,11 @@ class TestOfflineModelLoadFailure:
     def test_failed_warm_up_raises_promptcue_model_load_error(self) -> None:
         config   = PromptCueConfig(enable_semantic_scoring=True)
         analyzer = PromptCueAnalyzer(config)
-        with patch(
-            'sentence_transformers.SentenceTransformer',
-            side_effect=OSError('model not found'),
+        with (
+            patch(
+                'sentence_transformers.SentenceTransformer',
+                side_effect=OSError('model not found'),
+            ),
+            pytest.raises(PromptCueModelLoadError),
         ):
-            with pytest.raises(PromptCueModelLoadError):
-                analyzer.warm_up()
+            analyzer.warm_up()

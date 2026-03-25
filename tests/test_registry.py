@@ -77,7 +77,7 @@ def test_validation_rejects_empty_examples() -> None:
 
 def test_validation_rejects_non_bool_routing_hint() -> None:
     with pytest.raises(PromptCueRegistryError, match='must be a boolean'):
-        PromptCueRegistry(definitions=[_defn(routing_hints={'needs_retrieval': 'yes'})])  # type: ignore[arg-type]
+        PromptCueRegistry(definitions=[_defn(routing_hints={'needs_retrieval': 'yes'})])
 
 
 @pytest.mark.parametrize('content', ['', 'null', '- item'])
