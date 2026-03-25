@@ -14,12 +14,11 @@ from promptcue.constants import (
     PCUE_HINT_CURRENT_INFO,
     PCUE_HINT_REASONING,
     PCUE_HINT_RETRIEVAL,
-    PCUE_SCOPE_UNKNOWN,
     PCUE_UNKNOWN,
 )
 from promptcue.core.classifier import PromptCueClassificationResult, _top_margin
 from promptcue.core.registry import PromptCueRegistry
-from promptcue.models.enums import PromptCueConfidenceBand
+from promptcue.models.enums import PromptCueConfidenceBand, PromptCueScope
 
 
 @dataclass(slots=True)
@@ -30,7 +29,7 @@ class PromptCueDecisionResult:
     confidence_band:      PromptCueConfidenceBand
     ambiguity_score:      float
     classification_basis: str
-    scope:                str
+    scope:                PromptCueScope
     routing_hints:        dict[str, bool]
     action_hints:         dict[str, bool] = field(default_factory=dict)
 
@@ -91,7 +90,7 @@ class PromptCueDecisionEngine:
                 confidence_band      = PromptCueConfidenceBand.LOW,
                 ambiguity_score      = 1.0,
                 classification_basis = PCUE_BASIS_BELOW_THRESHOLD,
-                scope                = PCUE_SCOPE_UNKNOWN,
+                scope                = PromptCueScope.UNKNOWN,
                 routing_hints        = {
                     PCUE_HINT_CLARIFICATION: True,
                     PCUE_HINT_RETRIEVAL:     False,
@@ -119,7 +118,7 @@ class PromptCueDecisionEngine:
                 confidence_band      = PromptCueConfidenceBand.LOW,
                 ambiguity_score      = ambiguity,
                 classification_basis = PCUE_BASIS_BELOW_THRESHOLD,
-                scope                = PCUE_SCOPE_UNKNOWN,
+                scope                = PromptCueScope.UNKNOWN,
                 routing_hints        = {
                     PCUE_HINT_CLARIFICATION: True,
                     PCUE_HINT_RETRIEVAL:     False,
@@ -131,9 +130,15 @@ class PromptCueDecisionEngine:
 
         # Pull routing, scope, and action directives from the registry.
         definition   = self.registry.get_by_label(top.label)
-        yaml_routing = definition.routing_hints              if definition else {}
-        yaml_actions = definition.action_hints               if definition else {}
-        scope        = definition.scope                      if definition else PCUE_SCOPE_UNKNOWN
+        yaml_routing = definition.routing_hints if definition else {}
+        yaml_actions = definition.action_hints  if definition else {}
+        # Coerce the YAML string to the typed PromptCueScope enum; fall back to UNKNOWN for any
+        # value that is not a recognised scope (e.g. a future custom registry entry).
+        _scope_raw   = definition.scope if definition else PromptCueScope.UNKNOWN.value
+        try:
+            scope = PromptCueScope(_scope_raw)
+        except ValueError:
+            scope = PromptCueScope.UNKNOWN
         # Per-type margin override — set in query_types_en.yaml as ambiguity_margin_override.
         # Use it when defined; fall back to the global config value otherwise.
         eff_margin   = (
