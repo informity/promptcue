@@ -232,18 +232,18 @@ PromptCue ships with a default registry of 12 query types:
 
 | Label | Scope | Description |
 |---|---|---|
-| `lookup` | focused | Factual question with a single direct answer |
-| `comparison` | comparative | Asks to compare two or more options |
-| `recommendation` | focused | Asks for a decision or suggestion given constraints |
-| `troubleshooting` | focused | Diagnosing or fixing a problem |
-| `procedure` | focused | Step-by-step instructions for a task |
 | `analysis` | exploratory | Deep evaluation of a system, architecture, or decision |
-| `coverage` | broad | Broad overview or "tell me everything" request |
-| `update` | focused | Latest news, releases, or changes |
-| `summarization` | focused | Condense existing content — provided, referenced, or in-context — into a shorter form |
-| `generation` | focused | Produce entirely new content from scratch with no existing source to condense |
-| `validation` | focused | Verify or fact-check a specific stated claim, assumption, or belief |
 | `chitchat` | broad | Social or conversational, not a knowledge query |
+| `comparison` | comparative | Asks to compare two or more options |
+| `coverage` | broad | Broad overview or "tell me everything" request |
+| `generation` | focused | Produce entirely new content from scratch with no existing source to condense |
+| `lookup` | focused | Factual question with a single direct answer |
+| `procedure` | focused | Step-by-step instructions for a task |
+| `recommendation` | focused | Asks for a decision or suggestion given constraints |
+| `summarization` | focused | Condense existing content — provided, referenced, or in-context — into a shorter form |
+| `troubleshooting` | focused | Diagnosing or fixing a problem |
+| `update` | focused | Latest news, releases, or changes |
+| `validation` | focused | Verify or fact-check a specific stated claim, assumption, or belief |
 
 You can replace or extend the registry by pointing `PromptCueConfig.registry_path` at your
 own YAML file — the schema is documented in `src/promptcue/data/query_types_en.yaml`.
