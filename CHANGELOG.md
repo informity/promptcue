@@ -7,6 +7,74 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.2.0] — 2026-03-25
+
+### Added
+
+- `is_continuation` field on `PromptCueQueryObject` — `bool`, populated by pure-regex
+  detection of leading continuation openers (`also`, `furthermore`, `following up`,
+  `building on that`, etc.) before classification runs; no model dependency, no new type
+- `confidence_band` field on `PromptCueQueryObject` — `PromptCueConfidenceBand` enum
+  (`high` / `medium` / `low`); trigger-match results always map to `high`; semantic and
+  word-overlap results mapped by `confidence_high_threshold` (0.65) and
+  `confidence_medium_threshold` (0.35) in `PromptCueConfig`
+- `runner_up` property on `PromptCueQueryObject` — returns the second-ranked
+  `PromptCueCandidate` directly; previously only accessible by indexing
+  `candidate_query_types[1]`
+- `to_routing_dict()` method on `PromptCueQueryObject` — returns a flat `dict[str, bool]`
+  merging `routing_hints` and `action_hints` for callers who only need the downstream hints
+- `needs_structure` key in `routing_hints` — `True` when the query contains Markdown heading
+  patterns, `format as table`, `output in bullet points`, `with sections:`, etc.; signals
+  that the caller should handle format extraction before routing
+- `PromptCueConfidenceBand` enum — exported from package root alongside existing enums
+- `PromptCueConfig.strict()`, `.balanced()`, `.recall_heavy()` — named classmethods
+  returning pre-calibrated `PromptCueConfig` instances with documented threshold rationale
+- `PromptCueConfig.confidence_high_threshold` (default `0.65`) and
+  `confidence_medium_threshold` (default `0.35`) — thresholds controlling `confidence_band`
+  assignment
+- `PromptCueConfig.model_cache_dir: Path | None` — explicit model cache directory passed as
+  `cache_folder` to `SentenceTransformer`; falls back to `PROMPTCUE_MODEL_CACHE` env var,
+  then HuggingFace default (`~/.cache/huggingface/`)
+- `ambiguity_margin_override` per-type field in `query_types_en.yaml` — allows individual
+  types to override the global `ambiguity_margin`; `analysis` ships with `override=0.05`
+- `--matrix` flag in `.internal/tests/run.py` — prints per-type confusion matrix with
+  precision, recall, and F1 after each evaluation run
+- `--check` flag in `.internal/tests/run.py` — scans `query_types_en.yaml` and reports any
+  trigger phrase shared across two or more types; exits 0 when clean
+- 49 new unit tests in `tests/test_core.py` and `tests/test_language.py` — covering
+  normalization, cosine similarity, `EmbeddingBackend`, `DecisionEngine`, all classifier
+  tiers, all new Phase 1 schema fields, and the offline model-load failure path; total test
+  count raised from 67 to 116
+- Production deployment section in README — documents fail-fast contract,
+  `model_cache_dir` / `PROMPTCUE_MODEL_CACHE` usage, and deployment patterns for
+  local dev, EC2/EBS, Lambda container image, Lambda EFS, and Docker
+
+### Changed
+
+- `query_types_en.yaml` — 176 lines of new triggers, negatives, and examples validated
+  against 174 queries across 4 independent test sets (40 self-generated, 53 blind
+  self-generated, 41 Claude-generated, 40 Codex-generated); overall accuracy 100% with
+  no trigger overlaps (`--check` clean). Additions cover informal vocabulary
+  (`give me the gist`, `knock together`, `what have I missed`, `what's actually changed`),
+  non-tech domains (compliance, legal, HR, business operations), and 12 trigger-greed
+  fixes (e.g. `what changed in` removed from `update` to stop stealing troubleshooting
+  queries about user-behaviour changes; `what does` given coverage/procedure negatives)
+- `PromptCueBasis` — removed `label_match` and `fallback` values; `label_match` tier was
+  removed in v0.1.4 and `fallback` was never emitted by the decision engine; both are
+  now absent from the enum, the README, and `classification_basis` documentation
+- Word-overlap tier now uses Jaccard similarity (`|Q∩T| / |Q∪T|`) instead of
+  query-normalised overlap (`|Q∩T| / |Q|`); produces lower absolute scores, pushing more
+  ambiguous queries to the semantic path rather than returning a low-confidence
+  deterministic result
+- `query_types_en.yaml` renamed from `query_types.yaml` — file name now includes language
+  suffix (`_en`) for future multi-language registry support
+- README `PromptCueQueryObject` fields table updated: `is_continuation`, `confidence_band`,
+  and `runner_up` added; `classification_basis` values corrected
+- README `PromptCueConfig` fields table updated: `model_cache_dir` row added
+- README query types table sorted alphabetically
+
+---
+
 ## [0.1.4] — 2026-03-23
 
 ### Added
