@@ -1,6 +1,8 @@
-# Semantic scoring tests — requires the 'semantic' extra (sentence-transformers).
-# Tests are skipped automatically if sentence-transformers is not installed.
-# Run with: pytest tests/test_semantic.py -v
+# promptcue | Tests for semantic scoring — requires pip install "promptcue[semantic]"
+# Maintainer: Informity
+#
+# Tests are skipped automatically when sentence-transformers is not installed.
+# Run individually with: pytest tests/test_semantic.py -v
 
 import pytest
 

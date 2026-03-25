@@ -1,3 +1,6 @@
+# promptcue | End-to-end smoke test — verifies the default analyzer returns a valid result
+# Maintainer: Informity
+
 from promptcue import PromptCueAnalyzer
 
 

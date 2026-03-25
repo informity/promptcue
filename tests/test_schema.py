@@ -1,4 +1,5 @@
-# Tests for M6 schema additions: scope, action_hints, entities, constraints.
+# promptcue | Tests for schema fields: scope, action_hints, entities, constraints
+# Maintainer: Informity
 
 import pytest
 

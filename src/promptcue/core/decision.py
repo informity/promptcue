@@ -134,10 +134,12 @@ class PromptCueDecisionEngine:
         yaml_actions = definition.action_hints  if definition else {}
         # Coerce the YAML string to the typed PromptCueScope enum; fall back to UNKNOWN for any
         # value that is not a recognised scope (e.g. a future custom registry entry).
-        _scope_raw   = definition.scope if definition else PromptCueScope.UNKNOWN.value
-        try:
-            scope = PromptCueScope(_scope_raw)
-        except ValueError:
+        if definition:
+            try:
+                scope = PromptCueScope(definition.scope)
+            except ValueError:
+                scope = PromptCueScope.UNKNOWN
+        else:
             scope = PromptCueScope.UNKNOWN
         # Per-type margin override — set in query_types_en.yaml as ambiguity_margin_override.
         # Use it when defined; fall back to the global config value otherwise.

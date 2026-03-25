@@ -1,3 +1,6 @@
+# promptcue | Smoke tests for public package imports and enum values
+# Maintainer: Informity
+
 from promptcue import (
     PromptCueActionHint,
     PromptCueAnalyzer,

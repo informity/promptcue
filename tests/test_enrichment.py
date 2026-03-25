@@ -1,4 +1,6 @@
-# Tests for optional linguistic and keyword enrichment.
+# promptcue | Tests for optional linguistic and keyword enrichment (spaCy, KeyBERT)
+# Maintainer: Informity
+#
 # Each block is skipped automatically when the required optional dep is missing.
 
 import pytest

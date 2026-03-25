@@ -1,3 +1,6 @@
+# promptcue | Unit tests for PromptCueRegistry — loading, validation, and lookups
+# Maintainer: Informity
+
 import pytest
 
 from promptcue.core.registry import PromptCueRegistry, PromptCueTypeDefinition

@@ -1,3 +1,6 @@
+# promptcue | Integration tests for PromptCueAnalyzer — schema fields and async interface
+# Maintainer: Informity
+
 import pytest
 
 from promptcue import PromptCueAnalyzer
