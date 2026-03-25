@@ -37,16 +37,6 @@ class TestLanguageDetector:
     def test_detection_exception_returns_unknown(self) -> None:
         detector = PromptCueLanguageDetector(enabled=True)
         with patch('promptcue.extraction.language.PromptCueLanguageDetector._ensure_lib'):
-            with patch(
-                'promptcue.extraction.language.PromptCueLanguageDetector.detect',
-                side_effect=Exception('detect error'),
-            ):
-                # Verify detect() itself swallows exceptions by calling via wrapper.
-                # We test the real path by patching the inner _detect call.
-                pass
-
-        # Real test: patch langdetect.detect to raise, verify graceful degradation.
-        with patch('promptcue.extraction.language.PromptCueLanguageDetector._ensure_lib'):
             detector._loaded = True
             with patch('langdetect.detect', side_effect=Exception('LangDetectException')):
                 result = detector.detect('This sentence should trigger detection but fail.')

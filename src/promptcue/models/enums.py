@@ -40,7 +40,6 @@ class PromptCueActionHint(StrEnum):
 
 class PromptCueBasis(StrEnum):
     """Typed equivalent of the PCUE_BASIS_* constants in constants.py."""
-    LABEL_MATCH     = 'label_match'
     TRIGGER_MATCH   = 'trigger_match'
     WORD_OVERLAP    = 'word_overlap'
     FALLBACK        = 'fallback'

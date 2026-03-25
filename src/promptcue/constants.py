@@ -34,7 +34,6 @@ PCUE_UNKNOWN          = 'unknown'
 # Typed equivalent: PromptCueBasis (StrEnum) in models/enums.py
 # ==============================================================================
 
-PCUE_BASIS_LABEL_MATCH     = 'label_match'         # verbatim label found in query (0.90)
 PCUE_BASIS_TRIGGER_MATCH   = 'trigger_match'       # trigger phrase matched; score ∝ length
 PCUE_BASIS_WORD_OVERLAP    = 'word_overlap'        # vocabulary overlap with type definition
 PCUE_BASIS_SEMANTIC        = 'semantic_similarity' # embedding cosine similarity

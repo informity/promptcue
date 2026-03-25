@@ -107,7 +107,8 @@ class PromptCueDecisionEngine:
         )
         top, margin  = _top_margin(result.candidates)
         # top is always non-None here: the no-candidates guard above already returned.
-        assert top is not None
+        if top is None:
+            raise RuntimeError('_top_margin returned None despite non-empty candidates list.')
         ambiguity    = max(0.0, min(1.0, 1.0 - margin))
         unclear      = top.score < threshold
 

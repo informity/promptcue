@@ -287,10 +287,9 @@ class PromptCueClassifier:
         """
         result: dict[str, list[tuple[str, re.Pattern[str]]]] = {}
         for defn in self.registry.definitions:
-            phrases = defn.triggers if defn.triggers else defn.examples
             result[defn.label] = [
                 (phrase, re.compile(r'\b' + re.escape(phrase.lower()) + r'\b'))
-                for phrase in phrases
+                for phrase in defn.triggers
             ]
         return result
 

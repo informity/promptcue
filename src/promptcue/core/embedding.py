@@ -84,7 +84,7 @@ class PromptCueEmbeddingBackend:
                 ) from exc
             cache_path = str(self._cache_dir) if self._cache_dir else '<huggingface default>'
             try:
-                kwargs: dict = {}
+                kwargs: dict[str, str] = {}
                 if self._cache_dir is not None:
                     kwargs['cache_folder'] = str(self._cache_dir)
                 self._model = SentenceTransformer(self._model_name, **kwargs)

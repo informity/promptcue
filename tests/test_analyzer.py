@@ -4,7 +4,6 @@ from promptcue import PromptCueAnalyzer
 from promptcue.constants import (
     PCUE_BASIS_BELOW_THRESHOLD,
     PCUE_BASIS_FALLBACK,
-    PCUE_BASIS_LABEL_MATCH,
     PCUE_BASIS_SEMANTIC,
     PCUE_BASIS_TRIGGER_MATCH,
     PCUE_BASIS_WORD_OVERLAP,
@@ -19,9 +18,9 @@ _KNOWN_TYPES = {
 # Cascade classifier may produce deterministic or semantic basis depending on
 # which path fires — both are valid for these general tests.
 _KNOWN_BASES = {
-    PCUE_BASIS_LABEL_MATCH, PCUE_BASIS_TRIGGER_MATCH,
-    PCUE_BASIS_WORD_OVERLAP, PCUE_BASIS_FALLBACK,
-    PCUE_BASIS_BELOW_THRESHOLD, PCUE_BASIS_SEMANTIC,
+    PCUE_BASIS_TRIGGER_MATCH, PCUE_BASIS_WORD_OVERLAP,
+    PCUE_BASIS_FALLBACK, PCUE_BASIS_BELOW_THRESHOLD,
+    PCUE_BASIS_SEMANTIC,
 }
 
 

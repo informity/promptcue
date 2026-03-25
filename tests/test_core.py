@@ -24,6 +24,7 @@ from promptcue.core.registry import PromptCueRegistry
 from promptcue.exceptions import PromptCueModelLoadError
 from promptcue.extraction.normalization import normalize_text
 from promptcue.models.enums import PromptCueConfidenceBand
+from promptcue.models.schema import PromptCueCandidate
 
 # ==============================================================================
 # Normalization
@@ -157,7 +158,6 @@ class TestDecisionEngine:
     def test_below_threshold_returns_unknown(
         self, decision_engine: PromptCueDecisionEngine,
     ) -> None:
-        from promptcue.core.classifier import PromptCueCandidate
         candidates = [
             PromptCueCandidate(label='lookup',     score=0.10, basis='word_overlap'),
             PromptCueCandidate(label='comparison', score=0.08, basis='word_overlap'),
@@ -168,7 +168,6 @@ class TestDecisionEngine:
     def test_ambiguous_above_threshold_sets_clarification(
         self, decision_engine: PromptCueDecisionEngine,
     ) -> None:
-        from promptcue.core.classifier import PromptCueCandidate
         # Both candidates very close — margin < ambiguity_margin (0.08)
         candidates = [
             PromptCueCandidate(label='lookup',     score=0.62, basis='word_overlap'),
@@ -181,7 +180,6 @@ class TestDecisionEngine:
     def test_clean_resolution_populates_label(
         self, decision_engine: PromptCueDecisionEngine,
     ) -> None:
-        from promptcue.core.classifier import PromptCueCandidate
         candidates = [
             PromptCueCandidate(label='lookup',     score=0.80, basis='trigger_match'),
             PromptCueCandidate(label='comparison', score=0.30, basis='word_overlap'),
@@ -193,7 +191,6 @@ class TestDecisionEngine:
     def test_trigger_match_band_is_high(
         self, decision_engine: PromptCueDecisionEngine,
     ) -> None:
-        from promptcue.core.classifier import PromptCueCandidate
         candidates = [
             PromptCueCandidate(label='procedure', score=0.66, basis=PCUE_BASIS_TRIGGER_MATCH),
             PromptCueCandidate(label='lookup',    score=0.20, basis=PCUE_BASIS_WORD_OVERLAP),
