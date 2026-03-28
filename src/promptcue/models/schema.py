@@ -6,18 +6,22 @@ from __future__ import annotations
 from pydantic import BaseModel, Field, model_validator
 
 from promptcue.constants import (
-    PCUE_BASIS_FALLBACK,
     PCUE_SCHEMA_VERSION,
-    PCUE_UNKNOWN,
 )
-from promptcue.models.enums import PromptCueConfidenceBand, PromptCueScope
+from promptcue.models.enums import (
+    PromptCueActionHint,
+    PromptCueBasis,
+    PromptCueConfidenceBand,
+    PromptCueRoutingHint,
+    PromptCueScope,
+)
 
 
 class PromptCueCandidate(BaseModel):
     """A scored candidate query type from the classifier."""
     label: str
     score: float = Field(ge=0.0, le=1.0)
-    basis: str   = PCUE_BASIS_FALLBACK
+    basis: PromptCueBasis = PromptCueBasis.FALLBACK
 
 
 class PromptCueEntity(BaseModel):
@@ -96,7 +100,7 @@ class PromptCueQueryObject(BaseModel):
     # Classification
     # ==============================================================================
     primary_query_type:    str
-    classification_basis:  str                 = PCUE_UNKNOWN
+    classification_basis:  PromptCueBasis      = PromptCueBasis.FALLBACK
     candidate_query_types: list[PromptCueCandidate] = Field(default_factory=list)
     confidence:            float               = Field(ge=0.0, le=1.0)
     confidence_band:       PromptCueConfidenceBand = PromptCueConfidenceBand.LOW
@@ -129,8 +133,8 @@ class PromptCueQueryObject(BaseModel):
     # ==============================================================================
     # Routing and action directives
     # ==============================================================================
-    routing_hints: dict[str, bool] = Field(default_factory=dict)
-    action_hints:  dict[str, bool] = Field(default_factory=dict)
+    routing_hints: dict[PromptCueRoutingHint, bool] = Field(default_factory=dict)
+    action_hints:  dict[PromptCueActionHint, bool] = Field(default_factory=dict)
 
     # ==============================================================================
     # Constraints (reserved — populated in future milestones)
@@ -151,5 +155,8 @@ class PromptCueQueryObject(BaseModel):
         without inspecting the full PromptCueQueryObject.  routing_hints keys take
         priority when the same key appears in both dicts.
         """
-        merged = {**self.action_hints, **self.routing_hints}
+        merged = {
+            **{str(k): v for k, v in self.action_hints.items()},
+            **{str(k): v for k, v in self.routing_hints.items()},
+        }
         return merged

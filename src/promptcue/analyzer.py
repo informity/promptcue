@@ -8,9 +8,7 @@ import re
 
 from promptcue.config import PromptCueConfig
 from promptcue.constants import (
-    PCUE_BASIS_SEMANTIC,
     PCUE_DEFAULT_REGISTRY,
-    PCUE_HINT_STRUCTURE,
     PCUE_SCHEMA_VERSION,
 )
 from promptcue.core.classifier import PromptCueClassifier
@@ -26,6 +24,7 @@ from promptcue.models.schema import (
     PromptCueQueryObject,
     PromptCueSemanticHints,
 )
+from promptcue.models.enums import PromptCueBasis, PromptCueRoutingHint
 
 # ==============================================================================
 # Pre-classification detectors — pure regex, no model dependency
@@ -279,7 +278,7 @@ class PromptCueAnalyzer:
         top_basis = classification.candidates[0].basis if classification.candidates else None
         threshold = (
             self.config.semantic_similarity_threshold
-            if top_basis == PCUE_BASIS_SEMANTIC
+            if top_basis == PromptCueBasis.SEMANTIC
             else None
         )
 
@@ -290,7 +289,7 @@ class PromptCueAnalyzer:
         # Merge computed routing hints on top of YAML-derived hints from the decision engine.
         routing_hints = {
             **decision.routing_hints,
-            PCUE_HINT_STRUCTURE: needs_structure,
+            PromptCueRoutingHint.NEEDS_STRUCTURE: needs_structure,
         }
 
         return PromptCueQueryObject(

@@ -7,18 +7,17 @@ from dataclasses import dataclass, field
 
 from promptcue.config import PromptCueConfig
 from promptcue.constants import (
-    PCUE_ACTION_CLARIFY,
-    PCUE_BASIS_BELOW_THRESHOLD,
-    PCUE_BASIS_TRIGGER_MATCH,
-    PCUE_HINT_CLARIFICATION,
-    PCUE_HINT_CURRENT_INFO,
-    PCUE_HINT_REASONING,
-    PCUE_HINT_RETRIEVAL,
     PCUE_UNKNOWN,
 )
 from promptcue.core.classifier import PromptCueClassificationResult, _top_margin
 from promptcue.core.registry import PromptCueRegistry
-from promptcue.models.enums import PromptCueConfidenceBand, PromptCueScope
+from promptcue.models.enums import (
+    PromptCueActionHint,
+    PromptCueBasis,
+    PromptCueConfidenceBand,
+    PromptCueRoutingHint,
+    PromptCueScope,
+)
 
 
 @dataclass(slots=True)
@@ -31,10 +30,10 @@ class PromptCueDecisionResult:
     type_confidence_margin: float
     scope_confidence:     float
     scope_confidence_margin: float
-    classification_basis: str
+    classification_basis: PromptCueBasis
     scope:                PromptCueScope
-    routing_hints:        dict[str, bool]
-    action_hints:         dict[str, bool] = field(default_factory=dict)
+    routing_hints:        dict[PromptCueRoutingHint, bool]
+    action_hints:         dict[PromptCueActionHint, bool] = field(default_factory=dict)
     decision_notes:       list[str] = field(default_factory=list)
 
 
@@ -53,7 +52,7 @@ class PromptCueDecisionEngine:
     def _confidence_band(
         self,
         score: float,
-        basis: str,
+        basis: PromptCueBasis,
     ) -> PromptCueConfidenceBand:
         """Map a raw confidence score to a named band.
 
@@ -64,7 +63,7 @@ class PromptCueDecisionEngine:
           score >= confidence_medium_threshold → MEDIUM
           otherwise                            → LOW
         """
-        if basis == PCUE_BASIS_TRIGGER_MATCH:
+        if basis == PromptCueBasis.TRIGGER_MATCH:
             return PromptCueConfidenceBand.HIGH
         if score >= self.config.confidence_high_threshold:
             return PromptCueConfidenceBand.HIGH
@@ -96,15 +95,15 @@ class PromptCueDecisionEngine:
                 type_confidence_margin = 0.0,
                 scope_confidence     = 0.0,
                 scope_confidence_margin = 0.0,
-                classification_basis = PCUE_BASIS_BELOW_THRESHOLD,
+                classification_basis = PromptCueBasis.BELOW_THRESHOLD,
                 scope                = PromptCueScope.UNKNOWN,
                 routing_hints        = {
-                    PCUE_HINT_CLARIFICATION: True,
-                    PCUE_HINT_RETRIEVAL:     False,
-                    PCUE_HINT_REASONING:     False,
-                    PCUE_HINT_CURRENT_INFO:  False,
+                    PromptCueRoutingHint.NEEDS_CLARIFICATION: True,
+                    PromptCueRoutingHint.NEEDS_RETRIEVAL:     False,
+                    PromptCueRoutingHint.NEEDS_REASONING:     False,
+                    PromptCueRoutingHint.NEEDS_CURRENT_INFO:  False,
                 },
-                action_hints         = {PCUE_ACTION_CLARIFY: True},
+                action_hints         = {PromptCueActionHint.CLARIFY: True},
                 decision_notes       = ['no_candidates'],
             )
 
@@ -128,15 +127,15 @@ class PromptCueDecisionEngine:
                 type_confidence_margin = margin,
                 scope_confidence     = 0.0,
                 scope_confidence_margin = margin,
-                classification_basis = PCUE_BASIS_BELOW_THRESHOLD,
+                classification_basis = PromptCueBasis.BELOW_THRESHOLD,
                 scope                = PromptCueScope.UNKNOWN,
                 routing_hints        = {
-                    PCUE_HINT_CLARIFICATION: True,
-                    PCUE_HINT_RETRIEVAL:     False,
-                    PCUE_HINT_REASONING:     False,
-                    PCUE_HINT_CURRENT_INFO:  False,
+                    PromptCueRoutingHint.NEEDS_CLARIFICATION: True,
+                    PromptCueRoutingHint.NEEDS_RETRIEVAL:     False,
+                    PromptCueRoutingHint.NEEDS_REASONING:     False,
+                    PromptCueRoutingHint.NEEDS_CURRENT_INFO:  False,
                 },
-                action_hints         = {PCUE_ACTION_CLARIFY: True},
+                action_hints         = {PromptCueActionHint.CLARIFY: True},
                 decision_notes       = ['below_threshold'],
             )
 
@@ -166,16 +165,27 @@ class PromptCueDecisionEngine:
         is_ambiguous = margin < eff_margin
 
         routing_hints = {
-            PCUE_HINT_CLARIFICATION: is_ambiguous,
-            PCUE_HINT_RETRIEVAL:     bool(yaml_routing.get(PCUE_HINT_RETRIEVAL,    False)),
-            PCUE_HINT_REASONING:     bool(yaml_routing.get(PCUE_HINT_REASONING,    False)),
-            PCUE_HINT_CURRENT_INFO:  bool(yaml_routing.get(PCUE_HINT_CURRENT_INFO, False)),
+            PromptCueRoutingHint.NEEDS_CLARIFICATION: is_ambiguous,
+            PromptCueRoutingHint.NEEDS_RETRIEVAL: bool(
+                yaml_routing.get(PromptCueRoutingHint.NEEDS_RETRIEVAL.value, False)
+            ),
+            PromptCueRoutingHint.NEEDS_REASONING: bool(
+                yaml_routing.get(PromptCueRoutingHint.NEEDS_REASONING.value, False)
+            ),
+            PromptCueRoutingHint.NEEDS_CURRENT_INFO: bool(
+                yaml_routing.get(PromptCueRoutingHint.NEEDS_CURRENT_INFO.value, False)
+            ),
         }
 
         # Merge action hints from YAML, then override clarify if ambiguous.
-        action_hints: dict[str, bool] = {k: bool(v) for k, v in yaml_actions.items()}
+        action_hints: dict[PromptCueActionHint, bool] = {}
+        for key, value in yaml_actions.items():
+            try:
+                action_hints[PromptCueActionHint(key)] = bool(value)
+            except ValueError:
+                continue
         if is_ambiguous:
-            action_hints[PCUE_ACTION_CLARIFY] = True
+            action_hints[PromptCueActionHint.CLARIFY] = True
 
         decision_notes: list[str] = ['resolved_primary_label']
         if is_ambiguous:
@@ -189,7 +199,7 @@ class PromptCueDecisionEngine:
             type_confidence_margin = margin,
             scope_confidence     = (top.score if scope != PromptCueScope.UNKNOWN else 0.0),
             scope_confidence_margin = margin,
-            classification_basis = top.basis,
+            classification_basis = PromptCueBasis(top.basis),
             scope                = scope,
             routing_hints        = routing_hints,
             action_hints         = action_hints,
