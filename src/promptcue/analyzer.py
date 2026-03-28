@@ -18,13 +18,13 @@ from promptcue.extraction.keywords import PromptCueKeywordExtractor
 from promptcue.extraction.language import PromptCueLanguageDetector
 from promptcue.extraction.linguistic import PromptCueLinguisticExtractor
 from promptcue.extraction.normalization import normalize_text
+from promptcue.models.enums import PromptCueBasis, PromptCueRoutingHint
 from promptcue.models.schema import (
     PromptCueConfidenceMeta,
     PromptCueExplanations,
     PromptCueQueryObject,
     PromptCueSemanticHints,
 )
-from promptcue.models.enums import PromptCueBasis, PromptCueRoutingHint
 
 # ==============================================================================
 # Pre-classification detectors — pure regex, no model dependency
