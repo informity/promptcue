@@ -36,6 +36,8 @@ PromptCue uses a **cascade classifier**:
 The result is a Pydantic model (`PromptCueQueryObject`) carrying the classification, confidence,
 scope, routing hints, action directives, and any enrichment you have enabled.
 
+For broad multi-item prompts that also request structured/comparative output, PromptCue may promote focused-family labels to `coverage` to keep routing aligned with synthesis intent.
+
 ---
 
 ## Requirements

@@ -55,11 +55,11 @@ query_types:
       - does this mean for us
       - all the things that absolutely
       - what are all the things
-      - across all indexed documents
+      - across all documents
       - across all records
       - most important dates across all
       - key amounts found
-      - names of people mentioned across all indexed documents
+      - names of people mentioned across all documents
       - compliance-ready brief
       - requested output contract
       - verification plan
@@ -80,10 +80,10 @@ query_types:
       - help me understand the complete picture of this field including all the major tools, concepts, and how they fit together
       - we just entered this domain for the first time and I need to understand what that actually means for us across all the areas involved
       - what are all the things we absolutely need to get right for something like this — give me a full map not a single answer
-      - which indexed documents contain numeric amounts or financial figures? list the files and the key amounts found
-      - what are the most important dates mentioned across all indexed documents
+      - which documents contain numeric amounts or financial figures? list the files and the key amounts found
+      - what are the most important dates mentioned across all documents
       - return a compliance-ready brief with requested output contract and verification plan
-      - what are the names of people mentioned across all indexed documents
+      - what are the names of people mentioned across all documents
     routing_hints:
       needs_retrieval:    true
       needs_reasoning:    false
@@ -111,10 +111,10 @@ query_types:
       - what is the most sensible or effective approach to this         # → recommendation
       - what is the most practical way to handle this situation         # → recommendation
       - what does that process actually look like end to end            # → procedure
-      - which indexed documents contain numeric amounts or financial figures across all records  # → coverage
-      - what are the most important dates mentioned across all indexed documents                # → coverage
+      - which documents contain numeric amounts or financial figures across all records  # → coverage
+      - what are the most important dates mentioned across all documents                # → coverage
       - return a compliance-ready brief with verification plan                                  # → coverage
-      - what are the names of people mentioned across all indexed documents                     # → coverage
+      - what are the names of people mentioned across all documents                     # → coverage
     triggers:
       - what is
       - who is

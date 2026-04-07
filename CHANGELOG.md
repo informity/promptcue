@@ -9,6 +9,12 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+- Intent routing now promotes focused-family labels to `coverage` for clearly broad, multi-item structured prompts (model-agnostic heuristic based on semantic hints).
+- Coverage query examples/triggers were expanded for broad synthesis phrasing while keeping registry vocabulary generic (no app-specific routing dependency).
+- Added analyzer regression tests for broad multi-item prompts that previously drifted to focused routing.
+
 ## [0.3.4] — 2026-04-06
 
 ### Changed
