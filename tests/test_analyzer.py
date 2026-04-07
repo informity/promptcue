@@ -92,7 +92,8 @@ def test_explicit_recency_promotes_freshness_hints() -> None:
 
 def test_coverage_promotion_for_broad_amounts_prompt() -> None:
     result = PromptCueAnalyzer().analyze(
-        'Which documents contain numeric amounts or financial figures? List the files and the key amounts found.'
+        'Which documents contain numeric amounts or financial figures? '
+        'List the files and the key amounts found.'
     )
     assert result.primary_query_type == 'coverage'
     assert str(result.scope) == 'broad'
@@ -108,7 +109,10 @@ def test_coverage_promotion_for_broad_dates_prompt() -> None:
 
 def test_coverage_promotion_for_compliance_contract_prompt() -> None:
     result = PromptCueAnalyzer().analyze(
-        'Return a compliance-ready brief with headings exactly in this order: ## Requested Output Contract, ## Evidence Coverage, ## Conflicts and Contradictions, ## Missing Evidence, ## Verification Plan.'
+        'Return a compliance-ready brief with headings exactly in this order: '
+        '## Requested Output Contract, ## Evidence Coverage, '
+        '## Conflicts and Contradictions, ## Missing Evidence, '
+        '## Verification Plan.'
     )
     assert result.primary_query_type == 'coverage'
     assert str(result.scope) == 'broad'

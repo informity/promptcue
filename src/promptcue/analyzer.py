@@ -22,6 +22,7 @@ from promptcue.models.enums import (
     PromptCueActionHint,
     PromptCueBasis,
     PromptCueRoutingHint,
+    PromptCueScope,
 )
 from promptcue.models.schema import (
     PromptCueConfidenceMeta,
@@ -67,7 +68,10 @@ _STRUCTURE_PATTERNS: list[re.Pattern[str]] = [
 ]
 _MULTI_ITEM_PATTERNS: list[re.Pattern[str]] = [
     re.compile(
-        r'\b(across all|across the entire|all (?:indexed )?(?:documents|files|records)|multiple (?:documents|files|records))\b',
+        (
+            r'\b(across all|across the entire|all (?:documents|files|records)'
+            r'|multiple (?:documents|files|records))\b'
+        ),
         re.IGNORECASE,
     ),
     re.compile(r'\b(documents|files|records)\b', re.IGNORECASE),
@@ -235,7 +239,14 @@ def _should_promote_to_coverage(*, primary_label: str, hints: PromptCueSemanticH
     This keeps routing model-agnostic while preventing lookup/procedure drift on
     prompts that explicitly request corpus-wide aggregation/structured survey output.
     """
-    if primary_label not in {'lookup', 'procedure', 'troubleshooting', 'recommendation', 'validation', 'update'}:
+    if primary_label not in {
+        'lookup',
+        'procedure',
+        'troubleshooting',
+        'recommendation',
+        'validation',
+        'update',
+    }:
         return False
     if not hints.mentions_multiple_items:
         return False
