@@ -24,6 +24,22 @@ jobs:
       - name: Install build tools
         run: pip install build
 
+      - name: Verify tag matches package version
+        run: |
+          python - <<'PY'
+          import tomllib
+          from pathlib import Path
+
+          version = tomllib.loads(Path('pyproject.toml').read_text())['project']['version']
+          tag = '${{ github.ref_name }}'
+          expected = f'v{version}'
+          if tag != expected:
+              raise SystemExit(
+                  f'Tag/version mismatch: workflow tag={tag}, pyproject version={version} (expected tag {expected})'
+              )
+          print(f'Tag/version OK: {tag} == {expected}')
+          PY
+
       - name: Build wheel and sdist
         run: python -m build
 
