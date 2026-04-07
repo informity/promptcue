@@ -447,7 +447,7 @@ PromptCueAnalyzer(config: PromptCueConfig | None = None)
 | `entities` | `list[PromptCueEntity]` | Named entities with `text` and `entity_type` (spaCy label) |
 | `keywords` | `list[PromptCueKeyword]` | Keyphrases with `text`, `weight`, and `kind` from KeyBERT |
 | `routing_hints` | `dict[str, bool]` | `needs_retrieval`, `needs_reasoning`, `needs_current_info`, `needs_clarification`, `needs_structure` |
-| `semantic_hints` | `PromptCueSemanticHints` | Agnostic semantic cues (`mentions_multiple_items`, `requests_comparison`, `requests_enumeration`, `requests_structure`, `mentions_time`, `requires_multi_period_analysis`) |
+| `semantic_hints` | `PromptCueSemanticHints` | Agnostic semantic cues (`mentions_multiple_items`, `requests_comparison`, `requests_enumeration`, `requests_structure`, `mentions_time`, `explicit_recency`, `requires_multi_period_analysis`) |
 | `confidence_meta` | `PromptCueConfidenceMeta` | Confidence diagnostics (`type_confidence_margin`, `scope_confidence`, `scope_confidence_margin`) |
 | `explanations` | `PromptCueExplanations` | Debug metadata (`decision_notes`, `evidence_tokens`) |
 | `action_hints` | `dict[str, bool]` | Response-generation directives: `should_survey`, `should_enumerate`, `should_compare`, `should_direct_answer`, `should_check_recency`, `should_clarify`, `should_respond_conversationally` |
