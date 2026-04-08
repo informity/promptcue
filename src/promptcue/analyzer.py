@@ -69,15 +69,17 @@ _STRUCTURE_PATTERNS: list[re.Pattern[str]] = [
 _MULTI_ITEM_PATTERNS: list[re.Pattern[str]] = [
     re.compile(
         (
-            r'\b(across all|across the entire|all (?:documents|files|records)'
-            r'|multiple (?:documents|files|records))\b'
+            r'\b(across all|across the entire|all (?:documents|files|records|sources|entries)'
+            r'|multiple (?:documents|files|records|sources|entries))\b'
         ),
         re.IGNORECASE,
     ),
-    re.compile(r'\b(documents|files|records)\b', re.IGNORECASE),
+    re.compile(r'\b(documents|files|records|sources|entries|items)\b', re.IGNORECASE),
     re.compile(r'\bmost important (?:dates|amounts|figures|names)\b', re.IGNORECASE),
-    re.compile(r'\bkey amounts found\b', re.IGNORECASE),
-    re.compile(r'\bnames of people mentioned across all\b', re.IGNORECASE),
+]
+_SYNTHESIS_PATTERNS: list[re.Pattern[str]] = [
+    re.compile(r'\b(summarize|summary|overview|key findings?|main findings?)\b', re.IGNORECASE),
+    re.compile(r'\b(tell me about|describe)\b', re.IGNORECASE),
 ]
 _COMPARISON_PATTERNS: list[re.Pattern[str]] = [
     re.compile(
@@ -220,6 +222,10 @@ def _detect_requests_enumeration(text: str) -> bool:
     return any(pat.search(text) for pat in _ENUMERATION_PATTERNS)
 
 
+def _detect_requests_synthesis(text: str) -> bool:
+    return any(pat.search(text) for pat in _SYNTHESIS_PATTERNS)
+
+
 def _extract_evidence_tokens(text: str, limit: int = 8) -> list[str]:
     seen: set[str] = set()
     tokens: list[str] = []
@@ -233,7 +239,12 @@ def _extract_evidence_tokens(text: str, limit: int = 8) -> list[str]:
     return tokens
 
 
-def _should_promote_to_coverage(*, primary_label: str, hints: PromptCueSemanticHints) -> bool:
+def _should_promote_to_coverage(
+    *,
+    primary_label: str,
+    hints: PromptCueSemanticHints,
+    requests_synthesis: bool,
+) -> bool:
     """Promote focused-family intents to coverage when prompt shape is clearly broad synthesis.
 
     This keeps routing model-agnostic while preventing lookup/procedure drift on
@@ -255,6 +266,7 @@ def _should_promote_to_coverage(*, primary_label: str, hints: PromptCueSemanticH
         or hints.requests_enumeration
         or hints.requires_multi_period_analysis
         or hints.requests_comparison
+        or requests_synthesis
     )
 
 
@@ -333,6 +345,7 @@ class PromptCueAnalyzer:
         mentions_multiple_items = _detect_mentions_multiple_items(normalized)
         requests_comparison = _detect_requests_comparison(normalized)
         requests_enumeration = _detect_requests_enumeration(normalized)
+        requests_synthesis = _detect_requests_synthesis(normalized)
 
         classification = self.classifier.classify(normalized)
 
@@ -380,7 +393,11 @@ class PromptCueAnalyzer:
         primary_label = decision.primary_label
         scope = decision.scope
         decision_notes = list(decision.decision_notes)
-        if _should_promote_to_coverage(primary_label=primary_label, hints=semantic_hints):
+        if _should_promote_to_coverage(
+            primary_label=primary_label,
+            hints=semantic_hints,
+            requests_synthesis=requests_synthesis,
+        ):
             primary_label = 'coverage'
             scope = PromptCueScope.BROAD
             routing_hints[PromptCueRoutingHint.NEEDS_RETRIEVAL] = True

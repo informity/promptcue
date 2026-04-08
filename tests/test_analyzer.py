@@ -92,8 +92,8 @@ def test_explicit_recency_promotes_freshness_hints() -> None:
 
 def test_coverage_promotion_for_broad_amounts_prompt() -> None:
     result = PromptCueAnalyzer().analyze(
-        'Which documents contain numeric amounts or financial figures? '
-        'List the files and the key amounts found.'
+        'Which sources contain numeric amounts or financial figures? '
+        'Summarize key findings across all records.'
     )
     assert result.primary_query_type == 'coverage'
     assert str(result.scope) == 'broad'
@@ -101,7 +101,7 @@ def test_coverage_promotion_for_broad_amounts_prompt() -> None:
 
 def test_coverage_promotion_for_broad_dates_prompt() -> None:
     result = PromptCueAnalyzer().analyze(
-        'What are the most important dates mentioned across all documents?'
+        'What are the most important dates mentioned across all sources?'
     )
     assert result.primary_query_type == 'coverage'
     assert str(result.scope) == 'broad'
@@ -120,7 +120,7 @@ def test_coverage_promotion_for_compliance_contract_prompt() -> None:
 
 def test_coverage_promotion_for_people_across_documents_prompt() -> None:
     result = PromptCueAnalyzer().analyze(
-        'What are the names of people mentioned across all documents?'
+        'What are the names of people mentioned across all sources?'
     )
     assert result.primary_query_type == 'coverage'
     assert str(result.scope) == 'broad'
