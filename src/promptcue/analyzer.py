@@ -92,6 +92,14 @@ _ENUMERATION_PATTERNS: list[re.Pattern[str]] = [
         r'\b(list|enumerate|step[-\s]*by[-\s]*step|top\s+\d+|bullet(?:s| points?)?)\b',
         re.IGNORECASE,
     ),
+    re.compile(
+        (
+            r'\bwhat\s+are\s+the\s+'
+            r'(?:(?:most|key)\s+important\s+)?'
+            r'(?:names?|people|dates?|amounts?|figures?|values?)\b'
+        ),
+        re.IGNORECASE,
+    ),
 ]
 
 
@@ -257,6 +265,7 @@ def _should_promote_to_coverage(
         'recommendation',
         'validation',
         'update',
+        'unknown',
     }:
         return False
     if not hints.mentions_multiple_items:
