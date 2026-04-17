@@ -24,6 +24,7 @@ class PromptCueRoutingHint(StrEnum):
     NEEDS_RETRIEVAL     = 'needs_retrieval'
     NEEDS_REASONING     = 'needs_reasoning'
     NEEDS_CURRENT_INFO  = 'needs_current_info'
+    NEEDS_CHAT_HISTORY  = 'needs_chat_history'
     NEEDS_CLARIFICATION = 'needs_clarification'
     NEEDS_STRUCTURE     = 'needs_structure'
 

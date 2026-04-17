@@ -16,7 +16,7 @@ from promptcue.constants import (
 _KNOWN_TYPES = {
     'coverage', 'lookup', 'comparison', 'recommendation', 'troubleshooting',
     'procedure', 'analysis', 'update', 'summarization', 'generation',
-    'validation', 'chitchat', 'unknown',
+    'validation', 'conversation_summary', 'chitchat', 'unknown',
 }
 # Cascade classifier may produce deterministic or semantic basis depending on
 # which path fires — both are valid for these general tests.
@@ -57,6 +57,7 @@ def test_routing_hints_keys_present() -> None:
     assert 'needs_retrieval'     in result.routing_hints
     assert 'needs_reasoning'     in result.routing_hints
     assert 'needs_current_info'  in result.routing_hints
+    assert 'needs_chat_history'  in result.routing_hints
 
 
 # ==============================================================================
@@ -124,3 +125,10 @@ def test_coverage_promotion_for_people_across_documents_prompt() -> None:
     )
     assert result.primary_query_type == 'coverage'
     assert str(result.scope) == 'broad'
+
+
+def test_conversation_summary_routing() -> None:
+    result = PromptCueAnalyzer().analyze('What have we been chatting about? What are the topics?')
+    assert result.primary_query_type == 'conversation_summary'
+    assert result.routing_hints.get('needs_chat_history') is True
+    assert result.routing_hints.get('needs_retrieval') is False

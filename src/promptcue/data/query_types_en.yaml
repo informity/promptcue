@@ -5,7 +5,7 @@
 # triggers     — short phrases for the deterministic classifier (word-boundary regex matching)
 # examples     — full realistic sentences for the semantic classifier (embedding anchors)
 # scope        — query breadth: broad | focused | comparative | exploratory
-# routing_hints keys: needs_retrieval, needs_reasoning, needs_current_info
+# routing_hints keys: needs_retrieval, needs_reasoning, needs_current_info, needs_chat_history
 # action_hints keys:  should_survey, should_enumerate, should_compare,
 #                     should_direct_answer, should_check_recency,
 #                     should_clarify, should_respond_conversationally
@@ -766,6 +766,52 @@ query_types:
       should_check_recency:             false
       should_clarify:                   false
       should_respond_conversationally:  false
+
+  - label: conversation_summary
+    description: Request to recap or summarize the current conversation itself.
+    scope: focused
+    negatives:
+      - summarize this document in three bullets                         # → summarization
+      - give me an overview of this whole topic                          # → coverage
+      - list all files that mention this term                            # → lookup
+      - compare these two approaches                                     # → comparison
+      - what changed recently in this ecosystem                          # → update
+    triggers:
+      - summarize our chat
+      - summarize this chat
+      - summarize this conversation
+      - recap our chat
+      - recap this chat
+      - recap this conversation
+      - what have we been chatting about
+      - what did we discuss
+      - what topics did we discuss
+      - discussion topics in this chat
+      - topics in this conversation
+    examples:
+      - summarize our chat so far
+      - can you recap what we discussed in this conversation
+      - what have we been chatting about and what are the main topics
+      - show me the discussion topics in this chat
+      - give me a brief recap of this conversation with key points
+      - what did we cover so far in this thread
+      - summarize this chat into main topics and open questions
+      - can you provide a short memory overview of our discussion
+      - remind me what we talked about in this conversation
+      - list the key themes we discussed in this chat
+    routing_hints:
+      needs_retrieval:    false
+      needs_reasoning:    false
+      needs_current_info: false
+      needs_chat_history: true
+    action_hints:
+      should_survey:                    false
+      should_enumerate:                 true
+      should_compare:                   false
+      should_direct_answer:             true
+      should_check_recency:             false
+      should_clarify:                   false
+      should_respond_conversationally:  true
 
   - label: chitchat
     description: Conversational, off-topic, or social exchange with no information need.

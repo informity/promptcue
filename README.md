@@ -325,13 +325,14 @@ print(result.model_dump_json(indent=2))
 
 ## Query types
 
-PromptCue ships with a default registry of 12 query types:
+PromptCue ships with a default registry of 13 query types:
 
 | Label | Scope | Description |
 |---|---|---|
 | `analysis` | exploratory | Deep evaluation of a system, architecture, or decision |
 | `chitchat` | broad | Social or conversational, not a knowledge query |
 | `comparison` | comparative | Asks to compare two or more options |
+| `conversation_summary` | focused | Recap the current conversation itself (topics, key points, open items) |
 | `coverage` | broad | Broad overview or "tell me everything" request |
 | `generation` | focused | Produce entirely new content from scratch with no existing source to condense |
 | `lookup` | focused | Factual question with a single direct answer |
@@ -357,7 +358,7 @@ pipeline actually needs to decide — you rarely need all of them.
 | What the user is asking for | `primary_query_type` | `procedure`, `comparison`, `lookup` |
 | How broad or specific the query is | `scope` | `broad`, `focused`, `comparative`, `exploratory` |
 | How to structure the LLM response | `action_hints` | `should_enumerate`, `should_compare`, `should_direct_answer` |
-| Whether to retrieve / reason / check freshness | `routing_hints` | `needs_retrieval`, `needs_current_info`, `needs_reasoning` |
+| Whether to retrieve / reason / check freshness / use chat history | `routing_hints` | `needs_retrieval`, `needs_current_info`, `needs_reasoning`, `needs_chat_history` |
 | Whether the query mentions time | `semantic_hints.mentions_time` | `True` / `False` |
 | Whether the query explicitly asks for current/fresh info | `semantic_hints.explicit_recency` | `True` / `False` |
 | Whether the query requires cross-period analysis | `semantic_hints.requires_multi_period_analysis` | `True` / `False` |
@@ -379,10 +380,12 @@ pipeline actually needs to decide — you rarely need all of them.
 - **Time-aware pipeline** — gate temporal aggregation on `semantic_hints.requires_multi_period_analysis`.
 - **Structured-output pipeline** — detect explicit format requests via
   `routing_hints['needs_structure']` before passing to the generator.
+- **Conversation-memory pipeline** — route `routing_hints['needs_chat_history'] == True`
+  to chat-history recap summarization (no retrieval path), then answer with topic/key-point summary.
 - **Ambiguity guard** — check `confidence_band == 'low'` or `ambiguity_score > 0.5`
   before routing; fall back to clarification when confidence is too low.
 
-> The `primary_query_type` labels are intentionally granular (12 types). If you only need
+> The `primary_query_type` labels are intentionally granular (13 types). If you only need
 > coarse routing, `scope` already gives you broad / focused / comparative without looking at
 > the type label at all.
 
@@ -450,7 +453,7 @@ PromptCueAnalyzer(config: PromptCueConfig | None = None)
 | `named_entities` | `list[str]` | Named entity surface texts, plain strings (backward compat) |
 | `entities` | `list[PromptCueEntity]` | Named entities with `text` and `entity_type` (spaCy label) |
 | `keywords` | `list[PromptCueKeyword]` | Keyphrases with `text`, `weight`, and `kind` from KeyBERT |
-| `routing_hints` | `dict[str, bool]` | `needs_retrieval`, `needs_reasoning`, `needs_current_info`, `needs_clarification`, `needs_structure` |
+| `routing_hints` | `dict[str, bool]` | `needs_retrieval`, `needs_reasoning`, `needs_current_info`, `needs_chat_history`, `needs_clarification`, `needs_structure` |
 | `semantic_hints` | `PromptCueSemanticHints` | Agnostic semantic cues (`mentions_multiple_items`, `requests_comparison`, `requests_enumeration`, `requests_structure`, `mentions_time`, `explicit_recency`, `requires_multi_period_analysis`) |
 | `confidence_meta` | `PromptCueConfidenceMeta` | Confidence diagnostics (`type_confidence_margin`, `scope_confidence`, `scope_confidence_margin`) |
 | `explanations` | `PromptCueExplanations` | Debug metadata (`decision_notes`, `evidence_tokens`) |

@@ -10,14 +10,14 @@ from promptcue.exceptions import PromptCueRegistryError
 def test_registry_loads_defaults() -> None:
     registry    = PromptCueRegistry()
     query_types = registry.get_query_types()
-    assert len(query_types) >= 12
+    assert len(query_types) >= 13
 
 
 def test_registry_contains_expected_labels() -> None:
     registry = PromptCueRegistry()
     labels   = {qt.label for qt in registry.get_query_types()}
     expected = {'coverage', 'lookup', 'comparison', 'recommendation', 'troubleshooting',
-                'procedure', 'analysis', 'update', 'chitchat'}
+                'procedure', 'analysis', 'update', 'conversation_summary', 'chitchat'}
     assert expected.issubset(labels)
 
 

@@ -102,6 +102,7 @@ class PromptCueDecisionEngine:
                     PromptCueRoutingHint.NEEDS_RETRIEVAL:     False,
                     PromptCueRoutingHint.NEEDS_REASONING:     False,
                     PromptCueRoutingHint.NEEDS_CURRENT_INFO:  False,
+                    PromptCueRoutingHint.NEEDS_CHAT_HISTORY:  False,
                 },
                 action_hints         = {PromptCueActionHint.CLARIFY: True},
                 decision_notes       = ['no_candidates'],
@@ -134,6 +135,7 @@ class PromptCueDecisionEngine:
                     PromptCueRoutingHint.NEEDS_RETRIEVAL:     False,
                     PromptCueRoutingHint.NEEDS_REASONING:     False,
                     PromptCueRoutingHint.NEEDS_CURRENT_INFO:  False,
+                    PromptCueRoutingHint.NEEDS_CHAT_HISTORY:  False,
                 },
                 action_hints         = {PromptCueActionHint.CLARIFY: True},
                 decision_notes       = ['below_threshold'],
@@ -174,6 +176,9 @@ class PromptCueDecisionEngine:
             ),
             PromptCueRoutingHint.NEEDS_CURRENT_INFO: bool(
                 yaml_routing.get(PromptCueRoutingHint.NEEDS_CURRENT_INFO.value, False)
+            ),
+            PromptCueRoutingHint.NEEDS_CHAT_HISTORY: bool(
+                yaml_routing.get(PromptCueRoutingHint.NEEDS_CHAT_HISTORY.value, False)
             ),
         }
 

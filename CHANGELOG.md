@@ -9,6 +9,22 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- New generic intent label: `conversation_summary` for prompts that ask to recap the current conversation
+  (for example: "summarize our chat", "what did we discuss", "discussion topics in this chat").
+- New routing hint: `routing_hints['needs_chat_history']` to signal that consumers should route
+  to conversation-history summarization paths instead of retrieval-heavy corpus paths.
+- New registry examples/triggers/negatives for `conversation_summary` to improve semantic and deterministic
+  detection without app-specific rules.
+
+### Changed
+
+- PromptCue default taxonomy expanded from 12 to 13 query types.
+- README updated with the new query type and routing hint guidance.
+- Test suite expanded with deterministic, analyzer, semantic, and registry coverage for
+  `conversation_summary` and `needs_chat_history`.
+
 ## [0.3.6] — 2026-04-08
 
 ### Fixed
