@@ -9,6 +9,8 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.3.7] — 2026-04-17
+
 ### Added
 
 - New generic intent label: `chat_summary` for prompts that ask to recap the current conversation
