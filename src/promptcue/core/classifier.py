@@ -8,14 +8,9 @@ import threading
 from dataclasses import dataclass
 
 from promptcue.config import PromptCueConfig
-from promptcue.constants import (
-    PCUE_BASIS_FALLBACK,
-    PCUE_BASIS_SEMANTIC,
-    PCUE_BASIS_TRIGGER_MATCH,
-    PCUE_BASIS_WORD_OVERLAP,
-)
 from promptcue.core.embedding import PromptCueEmbeddingBackend, cosine_similarity_batch
 from promptcue.core.registry import PromptCueRegistry
+from promptcue.models.enums import PromptCueBasis
 from promptcue.models.schema import PromptCueCandidate
 
 
@@ -140,7 +135,7 @@ class PromptCueClassifier:
         # available in candidates even when the trigger path ultimately wins.
         trigger_override = (
             top_det is not None
-            and top_det.basis == PCUE_BASIS_TRIGGER_MATCH
+            and top_det.basis == PromptCueBasis.TRIGGER_MATCH
             and top_det.score >= self.config.trigger_fallback_threshold
             and det_margin >= self.config.ambiguity_margin
         )
@@ -207,7 +202,7 @@ class PromptCueClassifier:
                 # and "pros and cons" is a stronger signal than either alone.
                 bonus = min((len(matched) - 1) * 0.03, 0.06)
                 score = round(0.60 + 0.25 * specificity + bonus, 4)
-                basis = PCUE_BASIS_TRIGGER_MATCH
+                basis = PromptCueBasis.TRIGGER_MATCH
             else:
                 # Soft word-overlap fallback: Jaccard similarity |Q∩T| / |Q∪T|.
                 # True set-similarity is less query-length dependent than the prior
@@ -219,10 +214,10 @@ class PromptCueClassifier:
                 overlap = len(query_words & type_words) / len(union) if union else 0.0
                 if overlap > 0.0:
                     score = round(min(0.10 + 0.40 * overlap, 0.50), 4)
-                    basis = PCUE_BASIS_WORD_OVERLAP
+                    basis = PromptCueBasis.WORD_OVERLAP
                 else:
                     score = 0.10
-                    basis = PCUE_BASIS_FALLBACK
+                    basis = PromptCueBasis.FALLBACK
 
             scores.append(PromptCueCandidate(label=definition.label, score=score, basis=basis))
 
@@ -254,7 +249,7 @@ class PromptCueClassifier:
                     PromptCueCandidate(
                         label=definition.label,
                         score=0.0,
-                        basis=PCUE_BASIS_FALLBACK,
+                        basis=PromptCueBasis.FALLBACK,
                     )
                 )
                 continue
@@ -270,12 +265,12 @@ class PromptCueClassifier:
                     best_sim = max(0.0, best_sim - max(neg_sims) * penalty_weight)
 
             scores.append(
-                PromptCueCandidate(
-                    label=definition.label,
-                    score=round(min(max(best_sim, 0.0), 1.0), 6),
-                    basis=PCUE_BASIS_SEMANTIC,
+                    PromptCueCandidate(
+                        label=definition.label,
+                        score=round(min(max(best_sim, 0.0), 1.0), 6),
+                        basis=PromptCueBasis.SEMANTIC,
+                    )
                 )
-            )
 
         scores.sort(key=lambda item: item.score, reverse=True)
         return PromptCueClassificationResult(candidates=scores)

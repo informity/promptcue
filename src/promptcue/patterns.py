@@ -82,20 +82,25 @@ DISCOURSE_PREFIX_PATTERN: re.Pattern[str] = re.compile(
     r"^\s*(?:"
     r"ok(?:ay)?|alright|well|so|anyway|now|"
     r"(?:new|different)\s+(?:topic|subject)s?|"
-    r"on\s+another\s+subject|switch(?:ing)?\s+(?:(?:topic|subject)s?|context)|"
+    r"on\s+another\s+subject|"
+    r"switch(?:ing)?\s+(?:topic|topics|subject|subjects|context)|"
     r"(?:back|return(?:ing)?)\s+to"
     r")\b",
     re.IGNORECASE,
 )
 
 TOPIC_SHIFT_CUE_PATTERN: re.Pattern[str] = re.compile(
-    r"\b(?:new|different)\s+(?:topic|subject)s?\b"
+    r"\bnew\s+topic\b"
     r"|"
-    r"\bchange\s+(?:the\s+)?(?:topic|subject)s?\b"
+    r"\bchange\s+(?:the\s+)?(?:topic|subject)\b"
     r"|"
-    r"\bswitch(?:ing)?\s+(?:(?:topic|subject)s?|context)\b"
+    r"\bswitch(?:ing)?\s+(?:topic|topics|context)\b"
     r"|"
-    r"\b(?:back|return(?:ing)?)\s+to\b"
+    r"\bdifferent\s+topic\b"
+    r"|"
+    r"\binstead\b"
+    r"|"
+    r"\bunrelated\b"
     r"|"
     r"\bnow\s+(?:about|switch(?:ing)?)\b",
     re.IGNORECASE,
@@ -146,10 +151,14 @@ EXPLICIT_RECENCY_PATTERNS: list[re.Pattern[str]] = [
     re.compile(r"\bright\s+now\b", re.IGNORECASE),
     re.compile(r"\bnow\b", re.IGNORECASE),
     re.compile(r"\bcurrently\b", re.IGNORECASE),
-    re.compile(r"\bcurrent\b", re.IGNORECASE),
+    re.compile(r"\b(?:who|what|when|where)\s+(?:is|are)\s+(?:the\s+)?current\b", re.IGNORECASE),
+    re.compile(
+        r"\bcurrent\s+(?:state|status|version|year|quarter|month|week|price|rate|events?|conditions?)\b",
+        re.IGNORECASE,
+    ),
     re.compile(r"\blatest\b", re.IGNORECASE),
     re.compile(r"\bmost\s+recent\b", re.IGNORECASE),
-    re.compile(r"\brecent\b", re.IGNORECASE),
+    re.compile(r"\brecent\s+(?:updates?|changes?|events?|developments?|news)\b", re.IGNORECASE),
     re.compile(r"\bup[-\s]*to[-\s]*date\b", re.IGNORECASE),
     re.compile(r"\breal[-\s]*time\b", re.IGNORECASE),
     re.compile(r"\blive\b", re.IGNORECASE),
@@ -170,7 +179,9 @@ OUTPUT_FORMAT_PATTERNS: dict[str, re.Pattern[str]] = {
     "csv": re.compile(r"\b(csv\s+format|as\s+csv|output\s+csv)\b", re.IGNORECASE),
     "list": re.compile(r"\b(as\s+a\s+list|list\s+format)\b", re.IGNORECASE),
     "narrative": re.compile(r"\b(in\s+narrative\s+form|as\s+paragraphs?)\b", re.IGNORECASE),
+    "json": re.compile(r"\b(as\s+json|json\s+format|output\s+json|in\s+json)\b", re.IGNORECASE),
     "table": re.compile(
         r"\b(markdown\s+table|as\s+a\s+table|in\s+table\s+form|in\s+columns?)\b", re.IGNORECASE
     ),
+    "yaml": re.compile(r"\b(as\s+ya?ml|ya?ml\s+format|output\s+ya?ml|in\s+ya?ml)\b", re.IGNORECASE),
 }

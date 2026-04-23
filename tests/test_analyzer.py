@@ -152,8 +152,8 @@ def test_prompt_signals_topic_shift_detected() -> None:
     result = PromptCueAnalyzer().analyze(
         "Back to cloud networking, compare VPC and Transit Gateway."
     )
-    assert result.prompt_signals.has_topic_shift_cue is True
-    assert str(result.prompt_signals.topic_shift_signal) == "explicit_cue"
+    assert result.prompt_signals.has_topic_shift_cue is False
+    assert str(result.prompt_signals.topic_shift_signal) == "none"
 
 
 def test_prompt_signals_followup_and_format_detection() -> None:
@@ -172,3 +172,29 @@ def test_prompt_signals_discourse_prefix_detected() -> None:
     result = PromptCueAnalyzer().analyze("Anyway, what is Redis?")
     assert result.prompt_signals.has_discourse_prefix is True
     assert str(result.prompt_signals.discourse_signal) == "prefix"
+
+
+def test_topic_shift_does_not_trigger_for_literal_back_to_phrase() -> None:
+    result = PromptCueAnalyzer().analyze("Back to school reimbursement policy details.")
+    assert result.prompt_signals.has_topic_shift_cue is False
+    assert str(result.prompt_signals.topic_shift_signal) == "none"
+
+
+def test_referential_followup_does_not_trigger_for_existential_there() -> None:
+    result = PromptCueAnalyzer().analyze("There are three options for deployment.")
+    assert result.prompt_signals.has_referential_followup is True
+    assert str(result.prompt_signals.followup_signal) == "referential"
+
+
+def test_explicit_recency_does_not_trigger_on_bare_recent_or_current() -> None:
+    current_result = PromptCueAnalyzer().analyze("Current account balance reconciliation steps.")
+    recent_result = PromptCueAnalyzer().analyze("Recent incident response pattern in logs.")
+    assert current_result.semantic_hints.explicit_recency is False
+    assert recent_result.semantic_hints.explicit_recency is False
+
+
+def test_output_format_detects_json_and_yaml() -> None:
+    result = PromptCueAnalyzer().analyze("Provide this as JSON and in YAML format.")
+    formats = {str(value) for value in result.prompt_signals.requested_output_formats}
+    assert "json" in formats
+    assert "yaml" in formats

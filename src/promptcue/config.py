@@ -110,7 +110,7 @@ class PromptCueConfig(BaseModel):
     trigger_fallback_threshold: float = Field(default=0.60, ge=0.0, le=1.0)
     # Penalty subtracted from each type's semantic score per the max cosine
     # similarity with that type's negative examples.  0.0 disables the penalty.
-    # Derived from informity-ai's production classifier (_NEGATIVE_PENALTY_WEIGHT).
+    # Derived from production classifier calibration for this semantic stack.
     negative_penalty_weight: float = Field(default=0.15, ge=0.0, le=1.0)
 
     # ==============================================================================

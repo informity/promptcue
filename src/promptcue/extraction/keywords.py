@@ -72,7 +72,7 @@ class PromptCueKeywordExtractor:
             if self._kw_model is not None:
                 return
             try:
-                from keybert import KeyBERT
+                from keybert import KeyBERT  # type: ignore[import-untyped]
             except ImportError as exc:
                 raise ImportError(
                     "Keyword extraction requires KeyBERT. "

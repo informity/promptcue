@@ -42,9 +42,11 @@ class PromptCueActionHint(StrEnum):
 class PromptCueOutputFormat(StrEnum):
     BULLETS = "bullets"
     CSV = "csv"
+    JSON = "json"
     LIST = "list"
     NARRATIVE = "narrative"
     TABLE = "table"
+    YAML = "yaml"
 
 
 class PromptCueDiscourseSignal(StrEnum):

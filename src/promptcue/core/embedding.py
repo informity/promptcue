@@ -69,11 +69,18 @@ class PromptCueEmbeddingBackend:
         if self._embed_fn is not None:
             return [self._embed_fn(text) for text in texts_list]
         self._ensure_model()
-        embeddings = self._model.encode(
+        model = self._model
+        if model is None:
+            raise PromptCueModelLoadError(
+                self._model_name,
+                str(self._cache_dir) if self._cache_dir else "<huggingface default>",
+                RuntimeError("Embedding model did not initialize"),
+            )
+        embeddings = model.encode(
             texts_list,
             convert_to_numpy=True,
             show_progress_bar=self._show_progress_bar,
-        )  # type: ignore[union-attr]
+        )
         return embeddings.tolist()
 
     def warm_up(self) -> None:
