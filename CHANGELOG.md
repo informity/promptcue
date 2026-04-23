@@ -9,6 +9,8 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.3.8] — 2026-04-22
+
 ### Added
 
 - `prompt_signals` documentation in README (`PromptCueQueryObject` field map and “Which field should I use?” guidance), including generic continuation/topic-shift/follow-up/output-format signal coverage.

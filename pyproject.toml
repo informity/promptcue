@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "promptcue"
-version = "0.3.7"
+version = "0.3.8"
 description = "PromptCue - Classify and enrich prompts with routing cues for LLM pipelines"
 readme = "README.md"
 requires-python = ">=3.13"
